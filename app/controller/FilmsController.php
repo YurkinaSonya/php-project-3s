@@ -33,7 +33,7 @@ class FilmsController
     }
 
 
-    public function list(Route $route, Request $request): string //они же не нужны??? Но как бы есть в route, так что вот
+    public function list(Route $route, Request $request): Response //они же не нужны??? Но как бы есть в route, так что вот
     {
         $limit = $request->getQueryParam('limit', $this->pageCount);
         $offset = $request->getQueryParam('offset', 0);
@@ -42,11 +42,16 @@ class FilmsController
             fn($film): array => $film->toArray(),
             $this->repository->getList($offset, $limit)
         );
-        return $this->view->render($listArrays);
+        return $this->view->render([
+            'offset' => $offset,
+            'limit' => $limit,
+            'total' => $this->repository->getListTotalCount(),
+            'list' => $listArrays,
+        ]);
     }
     //Works
 
-    public function listPage(Route $route, Request $request): string //они же не нужны??? Но как бы есть в route, так что вот
+    public function listPage(Route $route, Request $request): Response //они же не нужны??? Но как бы есть в route, так что вот
     {
         $page = $route->getParam(0);
         $listArrays = array_map(
