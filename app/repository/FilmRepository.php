@@ -3,9 +3,22 @@
 namespace app\repository;
 
 use app\model\Film;
+use core\db\Handler;
 
 class FilmRepository
 {
+
+    private Handler $db;
+
+    /**
+     * @param Handler $db
+     */
+    public function __construct(Handler $db)
+    {
+        $this->db = $db;
+    }
+
+
     /**
      * @param int $offset
      * @param int $limit
@@ -13,50 +26,40 @@ class FilmRepository
      */
     public function getList(int $offset, int $limit) : array
     {
-        return array_slice($this->getFullList(), $offset, $limit);
+        $sql = 'SELECT * FROM film ORDER BY id ASC LIMIT ' . $limit . ' OFFSET ' . $offset;
+        return array_map(fn($row) => $this->arrayToFilm($row), $this->db->select($sql));
     }
 
     public function getListTotalCount() : int
     {
-        return count($this->getFullList());
+        $sql = 'SELECT count(*) as cnt FROM film';
+        $row = $this->db->selectOne($sql);
+        return (int)$row['cnt'];
     }
 
-    public function getFilm(int $id) : ?Film
+
+
+    public function getFilm(int $id) :?Film
     {
-        foreach ($this->getFullList() as $film) {
-            if ($film->getId() === $id) {
-                return $film;
+        $sql = 'SELECT * FROM film WHERE id = ' . $id;
+        $result = $this->db->selectOne($sql);
+        return $this->arrayToFilm($result);
+    }
+
+    private function arrayToFilm(?array $array) : ?Film
+    {
+        if ($array === null) {
+            return null;
+        }
+        foreach (['id', 'title','release_year'] as $key) {
+            if (!array_key_exists($key, $array)) {
+                return null;
             }
         }
-        return null;
+        return new Film($array['id'], $array['title'], $array['release_year']);
     }
 
-    /**
-     * @return Film[]
-     */
-    private function getFullList(): array
-    {
-        $id = 0;
-        return [
-            new Film(++$id, "Avatar", 2000),
-            new Film(++$id, "A", 2001),
-            new Film(++$id, "B", 2002),
-            new Film(++$id, "C", 2000),
-            new Film(++$id, "D", 2000),
-            new Film(++$id, "E", 2000),
-            new Film(++$id, "F", 2000),
-            new Film(++$id, "G", 2000),
-            new Film(++$id, "H", 2000),
-            new Film(++$id, "I", 2000),
-            new Film(++$id, "J", 2000),
-            new Film(++$id, "K", 2000),
-            new Film(++$id, "L", 2000),
-            new Film(++$id, "M", 2000),
-            new Film(++$id, "N", 2000),
-            new Film(++$id, "O", 2000),
-            new Film(++$id, "P", 2000),
-        ];
-    }
+
 
 
 }

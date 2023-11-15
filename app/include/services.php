@@ -22,6 +22,6 @@ $svc['app.view.json'] = \core\ServiceContainer::share(static function ($svc) {
 });
 
 $svc['app.repository.films'] = \core\ServiceContainer::share(static function ($svc) {
-    return new FilmRepository();
+    return new FilmRepository($svc['core.db.handler']);
 });
 
