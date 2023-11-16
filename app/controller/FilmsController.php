@@ -70,6 +70,33 @@ class FilmsController
         return $this->view->render($film->toArray());
     }
 
+    public function addSingle(Route $route, Request $request): string|Response //request???
+    {
+        $body = json_decode($request->getBody(), true);
 
+        $id = $this->repository->addFilm($body['title'], (int)$body['release_year']);
+
+        $film = $this->repository->getFilm($id);
+
+        return $this->view->render($film->toArray());
+    }
+
+    public function updateSingle(Route $route, Request $request): string|Response //request???
+    {
+        $body = json_decode($request->getBody(), true);
+
+        $id = $this->repository->updateFilm($route->getParam(0), $body['title'], $body['release_year']);
+
+        $film = $this->repository->getFilm($id);
+
+        return $this->view->render($film->toArray());
+    }
+
+    public function deleteSingle(Route $route, Request $request): string|Response //request???
+    {
+        $this->repository->deleteFilm($route->getParam(0));
+
+        return $this->view->render([true]);
+    }
 
 }

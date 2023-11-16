@@ -17,6 +17,7 @@ interface Handler
     public function select(string $sql) : array;
     public function selectOne(string $sql) : array|null;
     public function execute(string $sql) : bool|int;
+    public function getLastInsertId(): int;
 
 
 }

@@ -61,6 +61,12 @@ class MySql implements Handler
         return $this->query($sql);
     }
 
+    public function getLastInsertId(): int
+    {
+        $this->connect();
+        return mysqli_insert_id($this->connection);
+    }
+
     /**
      * @param string $sql
      * @return bool|\mysqli_result|void

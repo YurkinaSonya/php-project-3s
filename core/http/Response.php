@@ -44,7 +44,8 @@ class Response
     {
         $headers = [
             200 => 'Ok',
-            404 => 'Not Found'
+            400 => 'Invalid input',
+            404 => 'Not Found',
         ];
 
         return $headers[$this->resultCode] ?: 'Unknown';

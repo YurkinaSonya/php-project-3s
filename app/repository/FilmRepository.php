@@ -46,6 +46,37 @@ class FilmRepository
         return $this->arrayToFilm($result);
     }
 
+    public function addFilm(string $title, int $year) :int
+    {
+        $sql = "INSERT INTO film (title, release_year) VALUES ('$title','$year');";
+
+        $this->db->execute($sql);
+
+        return $this->db->getLastInsertId();
+    }
+
+    public function updateFilm(int $id, string $title, int $year) : int
+    {
+        $sql = "UPDATE film SET title = '$title', release_year = '$year' WHERE id = '$id';";
+        $this->db->execute($sql);
+        return $id;
+    }
+
+    public function findByTitleAndYear(string $title, int $year) : ?Film
+    {
+        return $this->arrayToFilm(
+            $this->db->selectOne(
+                sprintf('SELECT * FROM `film` WHERE `title` = \'%s\' AND release_year = %d', $title, $year)
+            )
+        );
+    }
+
+    public function deleteFilm(int $id) : void
+    {
+        $sql = "DELETE FROM film WHERE id = '$id';";
+        $this->db->execute($sql);
+    }
+
     private function arrayToFilm(?array $array) : ?Film
     {
         if ($array === null) {

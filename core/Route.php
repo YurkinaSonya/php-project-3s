@@ -3,6 +3,7 @@
 namespace core;
 
 use core\http\Request;
+use core\middleware\Middleware;
 
 class Route
 {
@@ -12,6 +13,9 @@ class Route
 
     /** @var callable */
     private $closure;
+
+    /** @var Middleware[] */
+    private array $middlewares = [];
 
     /** @var array */
     private array $params;
@@ -42,6 +46,20 @@ class Route
         $this->params = array_values($matches);
 
         return true;
+    }
+
+    /**
+     * @return Middleware[]
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    public function addMiddleware(Middleware $middleware): Route
+    {
+        $this->middlewares[] = $middleware;
+        return $this;
     }
 
     public function getClosure(): callable
