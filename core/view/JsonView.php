@@ -1,6 +1,6 @@
 <?php
 
-namespace app\view;
+namespace core\view;
 
 use core\http\Response;
 

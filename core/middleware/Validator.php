@@ -2,10 +2,8 @@
 
 namespace core\middleware;
 
-use app\view\View;
 use core\http\Request;
 use core\http\Response;
-use core\middleware\Middleware;
 use core\Route;
 
 abstract class Validator implements Middleware
