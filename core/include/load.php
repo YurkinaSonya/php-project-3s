@@ -11,6 +11,8 @@ require_once INC_CORE . '/db/MySql.php';
 
 require_once INC_CORE . '/model/AbstractModel.php';
 
+require_once INC_CORE . '/dto/AbstractDto.php';
+
 require_once INC_CORE . '/middleware/Middleware.php';
 require_once INC_CORE . '/middleware/Validator.php';
 
