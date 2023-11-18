@@ -9,7 +9,16 @@ require_once INC_CORE . '/http/Response.php';
 require_once INC_CORE . '/db/Handler.php';
 require_once INC_CORE . '/db/MySql.php';
 
+require_once INC_CORE . '/types/DateTimeJsonable.php';
+
+require_once INC_CORE . '/dto/AbstractDto.php';
 require_once INC_CORE . '/model/AbstractModel.php';
+require_once INC_CORE . '/repository/AbstractRepository.php';
+
+
+require_once INC_CORE . '/view/View.php';
+require_once INC_CORE . '/view/JsonView.php';
+
 
 require_once INC_CORE . '/dto/AbstractDto.php';
 
