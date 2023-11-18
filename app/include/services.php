@@ -1,10 +1,10 @@
 <?php
 
-use app\controller\IndexController;
 use app\controller\FilmsController;
-use app\view\JsonView;
-use \app\repository\FilmRepository;
-use \app\middleware\ValidateFilm;
+use app\controller\IndexController;
+use app\middleware\ValidateFilm;
+use app\repository\FilmRepository;
+use core\view\JsonView;
 
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
