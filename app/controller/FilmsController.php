@@ -51,7 +51,7 @@ class FilmsController
     }
     //Works
 
-    public function listPage(Route $route, Request $request): Response //они же не нужны??? Но как бы есть в route, так что вот
+    public function listPage(Route $route, Request $request): Response
     {
         $page = $route->getParam(0);
         $listArrays = array_map(
@@ -61,7 +61,7 @@ class FilmsController
         return $this->view->render($listArrays);
     }
 
-    public function single(Route $route, Request $request): string|Response //request???
+    public function single(Route $route, Request $request): string|Response
     {
         $film = $this->repository->getFilm($route->getParam(0));
         if ($film === null) {
@@ -70,7 +70,7 @@ class FilmsController
         return $this->view->render($film->toArray());
     }
 
-    public function addSingle(Route $route, Request $request): string|Response //request???
+    public function addSingle(Route $route, Request $request): string|Response
     {
         $body = json_decode($request->getBody(), true);
 
@@ -81,7 +81,7 @@ class FilmsController
         return $this->view->render($film->toArray());
     }
 
-    public function updateSingle(Route $route, Request $request): string|Response //request???
+    public function updateSingle(Route $route, Request $request): string|Response
     {
         $body = json_decode($request->getBody(), true);
 
@@ -92,7 +92,7 @@ class FilmsController
         return $this->view->render($film->toArray());
     }
 
-    public function deleteSingle(Route $route, Request $request): string|Response //request???
+    public function deleteSingle(Route $route, Request $request): string|Response
     {
         $this->repository->deleteFilm($route->getParam(0));
 
