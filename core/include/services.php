@@ -13,6 +13,11 @@ $svc['core.http.request_builder'] = \core\ServiceContainer::share(static functio
     );
 });
 
+$svc['app.view.json'] = \core\ServiceContainer::share(static function ($svc) {
+    return new \core\view\JsonView();
+});
+
+
 $svc['core.db.handler'] = \core\ServiceContainer::share(static function ($svc) {
     return new \core\db\MySql(
         $svc['config.db.user'],
