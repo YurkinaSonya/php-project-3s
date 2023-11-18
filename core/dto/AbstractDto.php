@@ -1,6 +1,8 @@
 <?php
 
-abstract class AbstractModel
+namespace core\dto;
+
+class AbstractDto
 {
     public function toArray() : array
     {

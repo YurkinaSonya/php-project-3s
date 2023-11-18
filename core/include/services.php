@@ -13,7 +13,7 @@ $svc['core.http.request_builder'] = \core\ServiceContainer::share(static functio
     );
 });
 
-$svc['app.view.json'] = \core\ServiceContainer::share(static function ($svc) {
+$svc['core.view.json'] = \core\ServiceContainer::share(static function ($svc) {
     return new \core\view\JsonView();
 });
 
