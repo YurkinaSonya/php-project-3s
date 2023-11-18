@@ -20,6 +20,8 @@ require_once INC_CORE . '/view/View.php';
 require_once INC_CORE . '/view/JsonView.php';
 
 
+require_once INC_CORE . '/dto/AbstractDto.php';
+
 require_once INC_CORE . '/middleware/Middleware.php';
 require_once INC_CORE . '/middleware/Validator.php';
 

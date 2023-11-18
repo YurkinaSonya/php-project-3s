@@ -2,7 +2,7 @@
 
 namespace core\dto;
 
-class AbstractDto
+abstract class AbstractDto
 {
     public function toArray() : array
     {
