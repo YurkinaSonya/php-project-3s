@@ -36,7 +36,7 @@ class CommunityRepository extends AbstractRepository
         return ['id', 'create_time', 'name', 'description', 'is_closed', 'subscribers_count'];
     }
 
-    protected function getModelDbDateFields(): array
+    protected function getModelDbComplexFields(): array
     {
         return ['create_time'];
     }

@@ -2,9 +2,10 @@
 
 namespace app\model;
 
+use core\model\AbstractModel;
 use core\types\DateTimeJsonable;
 
-class Community extends \AbstractModel
+class Community extends AbstractModel
 {
     protected string $id;
     protected DateTimeJsonable $createTime;

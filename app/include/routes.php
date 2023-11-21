@@ -11,9 +11,22 @@ $router->addRoute('GET', '/', fn(
     Request    $request
 ) => $svc['app.controller.index']->index($route, $request));
 
+
 /** @see \app\controller\CommunityController::listOfCommunity() */
 $router->addRoute('GET', '/community', fn(
     core\Route $route,
     Request    $request
 ) => $svc['app.controller.communities']->listOfCommunity($route, $request));
+
+/** @see \app\controller\AuthorizationController::register() */
+$router->addRoute('POST', '/register', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.authorization']->register($route, $request))->addMiddleware($svc['app.middleware.register']);
+
+/** @see \app\controller\AuthorizationController::login() */
+$router->addRoute('POST', '/login', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.authorization']->login($route, $request))->addMiddleware($svc['app.middleware.login']);
 

@@ -93,4 +93,8 @@ class CommunityDto extends AbstractDto
     }
 
 
+    protected static function getDtoTypes(): array
+    {
+        return ['createTime' => DateTimeJsonable::class];
+    }
 }
