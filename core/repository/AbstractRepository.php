@@ -2,6 +2,7 @@
 
 namespace core\repository;
 
+use core\model\AbstractModel;
 use core\types\DateTimeJsonable;
 
 abstract class AbstractRepository
@@ -17,11 +18,11 @@ abstract class AbstractRepository
     /**
      * @return string[]
      */
-    protected function getModelDbDateFields() : array {
+    protected function getModelDbComplexFields() : array {
         return [];
     }
 
-    protected function arrayToModel(?array $array) : ?\AbstractModel
+    protected function arrayToModel(?array $array) : ?AbstractModel
     {
         if ($array === null) {
             return null;
@@ -41,14 +42,26 @@ abstract class AbstractRepository
 
     protected function convertFieldValue(string $field, mixed $dbValue) : mixed
     {
-        if (in_array($field, $this->getModelDbDateFields())) {
+        $complexFields = $this->getModelDbComplexFields();
+        if (array_key_exists($field, $complexFields)) {
             try {
-                return new DateTimeJsonable($dbValue);
+                $valueClassName = $complexFields[$field];
+                return new $valueClassName($dbValue);
             }
             catch (\Exception $exception) {
                 return null;
             }
         }
         return $dbValue;
+    }
+
+    protected function generateUuid(): string
+    {
+        $data = openssl_random_pseudo_bytes(16, $strong);
+
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

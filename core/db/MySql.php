@@ -2,6 +2,7 @@
 
 namespace core\db;
 
+use Cassandra\Date;
 use core\db\Handler;
 use core\http\Response;
 
@@ -56,6 +57,26 @@ class MySql implements Handler
         return mysqli_fetch_assoc($this->query($sql));
     }
 
+    public function insert($tableName, $values): bool|int
+    {
+        return $this->execute(sprintf(
+            'INSERT INTO `%s` SET %s',
+            $tableName,
+            implode(', ', $this->valuesToString($values))
+        ));
+    }
+
+    public function update(string $tableName, array $values, ?string $where = null): bool|int
+    {
+        return $this->execute(sprintf(
+            'UPDATE `%s` set %s%s',
+            $tableName,
+            implode(', ', $this->valuesToString($values)),
+            $where ? ('WHERE ' . $where) : ''
+        ));
+    }
+
+
     public function execute(string $sql): bool|int
     {
         return $this->query($sql);
@@ -74,10 +95,45 @@ class MySql implements Handler
     private function query(string $sql)
     {
         $this->connect();
-        $query = mysqli_query($this->connection, $sql);
+        try {
+            $query = mysqli_query($this->connection, $sql);
+        }
+        catch (\mysqli_sql_exception $exception) {
+            die('query error: ' . $exception->getMessage() . ', QUERY :' . $sql);
+        }
         if ($query === false) {
             die('query error: ' . mysqli_error($this->connection));
         }
         return $query;
+    }
+
+    private function valuesToString(array $values) : array
+    {
+        return array_map(fn($field, $value): string => sprintf(
+            '`%s` = %s',
+            $field,
+            $this->addQuotes($value)
+        ), array_keys($values), array_values($values));
+    }
+
+    private function addQuotes(mixed $value): string
+    {
+        if (is_int($value) || is_float($value)) {
+            return $value;
+        }
+
+        if (is_bool($value)) {
+            return (int)$value;
+        }
+
+        if ($value === null) {
+            return 'NULL';
+        }
+
+        if ($value instanceof \DateTime) {
+            $value = $value->format('Y-m-d H:i:s');
+        }
+
+        return '\'' . mysqli_escape_string($this->connection, $value) . '\'';
     }
 }

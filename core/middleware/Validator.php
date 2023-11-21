@@ -33,7 +33,7 @@ abstract class Validator implements Middleware
             if (array_key_exists($field, $data) && (string)$data[$field] !== '') {
                 continue;
             }
-            $this->errors[] = sprintf('Mandatory field "%s" is empty', $field);
+            $this->errors[] = sprintf('Mandatory field \'%s\' is empty', $field);
         }
     }
 
