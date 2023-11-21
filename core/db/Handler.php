@@ -16,6 +16,8 @@ interface Handler
 
     public function select(string $sql) : array;
     public function selectOne(string $sql) : array|null;
+    public function insert($tableName, $values): bool|int;
+    public function update(string $tableName, array $values, ?string $where = null): bool|int;
     public function execute(string $sql) : bool|int;
     public function getLastInsertId(): int;
 

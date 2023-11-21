@@ -2,6 +2,8 @@
 
 namespace core\http;
 
+use mysql_xdevapi\Exception;
+
 class Request
 {
 
@@ -70,6 +72,18 @@ class Request
     public function getBody(): string
     {
         return $this->body;
+    }
+    public function getBodyJson(): ?array
+    {
+        try {
+            return json_decode($this->getBody() ?: '[]', true, 512, JSON_THROW_ON_ERROR);
+        }
+        catch (\JsonException $e) {
+            die(sprintf(
+                'Incoming JSON incorrect: %s',
+                $e->getMessage()
+            ));
+        }
     }
 
 
