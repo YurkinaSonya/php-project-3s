@@ -67,12 +67,15 @@ class TokenService
     public function createToken(string $userId) : string
     {
         $token = bin2hex(random_bytes(16));
-        $this->tokenRepository->createToken($userId, $token);
+        $this->tokenRepository->createToken(new Token(null, $userId, $token));
         return $token;
     }
 
-    public function logoutUser(string $userId) : string
+    public function logoutUser() : void
     {
+        $token = $this->getCurrentToken();
+        $token->setLogoutTime(new \DateTime());
+        $this->tokenRepository->updateToken($token);
 
     }
 

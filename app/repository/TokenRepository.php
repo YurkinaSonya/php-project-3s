@@ -22,17 +22,16 @@ class TokenRepository extends AbstractRepository
     }
 
 
-    public function createToken(string $userId, string $token): void
+    public function createToken(Token $token): void
     {
-        $id = $this->generateUuid();
-        $this->db->insert('user_token', [
-            'id' => $id,
-            'user_id' => $userId,
-            'value' => $token,
-            'create_time' => new \DateTime(),
-            'expire_time' => (new \DateTime('+' . $this->ttl . ' seconds')),
-            'logout_time' => null
-        ]);
+        $token->setCreateTime(new \DateTime());
+        $token->setExpireTime(new \DateTime('+' . $this->ttl . ' seconds'));
+        $this->save($token);
+    }
+
+    public function updateToken(Token $token) : void
+    {
+        $this->save($token);
     }
 
     public function findByToken(string $token) : ?Token
@@ -41,6 +40,11 @@ class TokenRepository extends AbstractRepository
         $sql = 'SELECT * FROM user_token WHERE `value` = "' . $token . '" AND expire_time > "' . $currentDate . '" AND logout_time IS NULL';
         $result = $this->db->selectOne($sql);
         return Token::fromArray($result);
+    }
+
+    public function setLogoutTime(string $token) : void
+    {
+
     }
 
     protected function getTableName(): string

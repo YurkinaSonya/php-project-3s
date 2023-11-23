@@ -30,6 +30,12 @@ $router->addRoute('POST', '/login', fn(
     Request    $request
 ) => $svc['app.controller.authorization']->login($route, $request))->addMiddleware($svc['app.middleware.login']);
 
+/** @see \app\controller\AuthorizationController::logout() */
+$router->addRoute('POST', '/logout', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.authorization']->logout($route, $request))->addMiddleware($svc['app.middleware.token']);
+
 /** @see \app\controller\AuthorizationController::profile() */
 $router->addRoute('GET', '/profile', fn(
     core\Route $route,

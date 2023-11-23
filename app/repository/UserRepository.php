@@ -12,9 +12,13 @@ class UserRepository extends AbstractRepository
 
     public function createUser(User $user): string
     {
-        if ($user->getId() === null) {
-            $user->setCreateTime(new \DateTime());
-        }
+        $user->setCreateTime(new \DateTime());
+        $this->save($user);
+        return $user->getId();
+    }
+
+    public function updateUser(User $user):string
+    {
         $this->save($user);
         return $user->getId();
     }
@@ -35,11 +39,6 @@ class UserRepository extends AbstractRepository
         $sql = 'SELECT * FROM user WHERE id = "' . $id . '"';
         $result = $this->db->selectOne($sql);
         return $result ? User::fromArray($result) : null;
-    }
-
-    public function updateUser()
-    {
-
     }
 
     protected function getTableName(): string

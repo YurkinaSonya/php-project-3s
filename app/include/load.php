@@ -8,6 +8,7 @@ require_once INC_APP_MODEL . '/Token.php';
 require_once INC_APP_DTO . '/CommunityDto.php';
 require_once INC_APP_DTO . '/LoginCredentialsDto.php';
 require_once INC_APP_DTO . '/UserDto.php';
+require_once INC_APP_DTO . '/ResponseDto.php';
 require_once INC_APP_DTO . '/UserEditDto.php';
 require_once INC_APP_DTO . '/UserRegisterDto.php';
 

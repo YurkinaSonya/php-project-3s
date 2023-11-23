@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\dto\LoginCredentialsDto;
+use app\dto\ResponseDto;
 use app\dto\UserDto;
 use app\dto\UserEditDto;
 use app\dto\UserRegisterDto;
@@ -45,6 +46,7 @@ class AuthorizationController
         $registerDto->setPassword($this->encryptService->encryptPassword($registerDto->getPassword()));
         $dtoArray = $registerDto->toArray();
         $user = User::fromArray($dtoArray);
+        /** @var User $user */
         $userId = $this->userRepository->createUser($user);
         $token = $this->tokenService->createToken($userId);
         return $this->view->render(['token' => $token]);
@@ -70,9 +72,17 @@ class AuthorizationController
     {
         $editDto = UserEditDto::fromArray($request->getBodyJson());
         $user = $this->userRepository->findById($this->tokenService->getCurrentUserId());
+        /** @var User $user */
         $user = $user->outsideUpdateFromDto($editDto);
-        $id = $this->userRepository->createUser($user);
+        $id = $this->userRepository->updateUser($user);
         return $this->view->render(['id' => $id]);
+    }
+
+    public function logout(Route $route, Request $request) : Response
+    {
+        $this->tokenService->logoutUser();
+        $resp = new ResponseDto(null, 'Logged out');
+        return $this->view->render($resp ->toArray());
     }
 
     private function hydrateUserDto(?User $user) : ?UserDto

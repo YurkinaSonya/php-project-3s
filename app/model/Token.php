@@ -7,22 +7,22 @@ use core\model\AbstractModel;
 
 class Token extends AbstractModel
 {
-    private string $id;
-    private string $userId;
-    private string $value;
-    private \DateTime $createTime;
-    private \DateTime $expireTime;
-    private ?\DateTime $logoutTime;
+    protected ?string $id;
+    protected string $userId;
+    protected string $value;
+    protected ?\DateTime $createTime;
+    protected ?\DateTime $expireTime;
+    protected ?\DateTime $logoutTime;
 
     /**
-     * @param string $id
+     * @param string|null $id
      * @param string $userId
      * @param string $value
-     * @param \DateTime $createTime
-     * @param \DateTime $expireTime
+     * @param \DateTime|null $createTime
+     * @param \DateTime|null $expireTime
      * @param \DateTime|null $logoutTime
      */
-    public function __construct(string $id, string $userId, string $value, \DateTime $createTime, \DateTime $expireTime, ?\DateTime $logoutTime)
+    public function __construct(?string $id, string $userId, string $value, ?\DateTime $createTime = null, \DateTime $expireTime = null, ?\DateTime $logoutTime  = null)
     {
         $this->id = $id;
         $this->userId = $userId;
@@ -32,12 +32,12 @@ class Token extends AbstractModel
         $this->logoutTime = $logoutTime;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(string $id): void
+    public function setId(?string $id): void
     {
         $this->id = $id;
     }
@@ -62,22 +62,22 @@ class Token extends AbstractModel
         $this->value = $value;
     }
 
-    public function getCreateTime(): \DateTime
+    public function getCreateTime(): ?\DateTime
     {
         return $this->createTime;
     }
 
-    public function setCreateTime(\DateTime $createTime): void
+    public function setCreateTime(?\DateTime $createTime): void
     {
         $this->createTime = $createTime;
     }
 
-    public function getExpireTime(): \DateTime
+    public function getExpireTime(): ?\DateTime
     {
         return $this->expireTime;
     }
 
-    public function setExpireTime(\DateTime $expireTime): void
+    public function setExpireTime(?\DateTime $expireTime): void
     {
         $this->expireTime = $expireTime;
     }
