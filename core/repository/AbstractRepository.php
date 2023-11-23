@@ -23,11 +23,12 @@ abstract class AbstractRepository
 
     protected function save(AbstractModel $model) : void
     {
-        if(!$model->getId() === null) {
+        if($model->getId() !== null) {
+            //var_export($model); die;
             $this->db->update($this->getTableName(), $this->arrayModelToDbFields($model));
         }
-        else {
-            $model->setId($this->generateUuid());
+    else {
+        $model->setId($this->generateUuid());
             $this->db->insert($this->getTableName(), $this->arrayModelToDbFields($model));
         }
     }
