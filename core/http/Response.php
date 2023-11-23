@@ -45,6 +45,7 @@ class Response
         $headers = [
             200 => 'Ok',
             400 => 'Invalid input',
+            401 => 'Unauthorized',
             404 => 'Not Found',
         ];
 

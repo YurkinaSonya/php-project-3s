@@ -2,59 +2,35 @@
 
 namespace core\repository;
 
+use core\db\Handler;
 use core\model\AbstractModel;
 use core\types\DateTimeJsonable;
 
 abstract class AbstractRepository
 {
-
-    abstract protected function getModelClass() : string;
-
-    /**
-     * @return string[]
-     */
-    abstract protected function getModelDbFields() : array;
+    protected Handler $db;
 
     /**
-     * @return string[]
+     * @param Handler $db
      */
-    protected function getModelDbComplexFields() : array {
-        return [];
-    }
-
-    protected function arrayToModel(?array $array) : ?AbstractModel
+    public function __construct(Handler $db)
     {
-        if ($array === null) {
-            return null;
-        }
-
-        $modelClassName = $this->getModelClass();
-        $modelFields = $this->getModelDbFields();
-
-        foreach ($modelFields as $key) {
-            if (!array_key_exists($key, $array)) {
-                return null;
-            }
-        }
-
-        return new $modelClassName(...array_map(fn(string $field)=>$this->convertFieldValue($field, $array[$field]), $modelFields));
+        $this->db = $db;
     }
 
-    protected function convertFieldValue(string $field, mixed $dbValue) : mixed
+    abstract protected function getTableName() : string;
+
+
+    protected function save(AbstractModel $model) : void
     {
-        $complexFields = $this->getModelDbComplexFields();
-        if (array_key_exists($field, $complexFields)) {
-            try {
-                $valueClassName = $complexFields[$field];
-                return new $valueClassName($dbValue);
-            }
-            catch (\Exception $exception) {
-                return null;
-            }
+        if(!$model->getId() === null) {
+            $this->db->update($this->getTableName(), $this->arrayModelToDbFields($model));
         }
-        return $dbValue;
+        else {
+            $model->setId($this->generateUuid());
+            $this->db->insert($this->getTableName(), $this->arrayModelToDbFields($model));
+        }
     }
-
     protected function generateUuid(): string
     {
         $data = openssl_random_pseudo_bytes(16, $strong);
@@ -63,5 +39,19 @@ abstract class AbstractRepository
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
+
+    private function arrayModelToDbFields(AbstractModel $model) : array
+    {
+        $modelValues = $model->toArray();
+        $dbFields = $model->outsideGetModelDbFields();
+        //var_export($modelValues); die;
+        $dbModelValues = [];
+        foreach ($dbFields as $dbField => $field) {
+            //var_export($dbField);
+            $dbModelValues[$dbField] = $modelValues[$field];
+        }
+        //var_export($dbModelValues); die;
+        return $dbModelValues;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace core\dto;
 
+use Cassandra\Date;
+
 abstract class AbstractDto
 {
     abstract protected static function getDtoTypes(): array;
@@ -25,6 +27,9 @@ abstract class AbstractDto
                 continue;
             }
             $type = $typesArray[$key];
+            if ($value instanceof \DateTime) {
+                $value = $value->format(\DateTime::ATOM);
+            }
             $value = new $type($value);
         }
         return $array;
