@@ -24,11 +24,13 @@ abstract class AbstractRepository
     protected function save(AbstractModel $model) : void
     {
         if($model->getId() !== null) {
-            //var_export($model); die;
-            $this->db->update($this->getTableName(), $this->arrayModelToDbFields($model));
+            $array = $this->arrayModelToDbFields($model);
+            $id = $array['id'];
+            unset($array['id']);
+            $this->db->update($this->getTableName(), $array, 'id = "' . $id . '"');
         }
-    else {
-        $model->setId($this->generateUuid());
+        else {
+            $model->setId($this->generateUuid());
             $this->db->insert($this->getTableName(), $this->arrayModelToDbFields($model));
         }
     }
@@ -45,14 +47,12 @@ abstract class AbstractRepository
     private function arrayModelToDbFields(AbstractModel $model) : array
     {
         $modelValues = $model->toArray();
+        //var_export($modelValues);
         $dbFields = $model->outsideGetModelDbFields();
-        //var_export($modelValues); die;
         $dbModelValues = [];
         foreach ($dbFields as $dbField => $field) {
-            //var_export($dbField);
             $dbModelValues[$dbField] = $modelValues[$field];
         }
-        //var_export($dbModelValues); die;
         return $dbModelValues;
     }
 }
