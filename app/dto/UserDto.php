@@ -7,24 +7,24 @@ use core\types\DateTimeJsonable;
 
 class UserDto extends AbstractDto
 {
-    protected string $id;
-    protected DateTimeJsonable $createTime;
-    protected string $fullName;
-    protected ?DateTimeJsonable $birthDate;
-    protected string $gender;
-    protected string $email;
-    protected ?string $phoneNumber;
+    protected ?string $id = null;
+    protected ?DateTimeJsonable $createTime = null;
+    protected ?string $fullName = null;
+    protected ?DateTimeJsonable $birthDate = null;
+    protected ?string $gender = null;
+    protected ?string $email = null;
+    protected ?string $phoneNumber = null;
 
     /**
-     * @param string $id
-     * @param DateTimeJsonable $createTime
-     * @param string $fullName
+     * @param string|null $id
+     * @param DateTimeJsonable|null $createTime
+     * @param string|null $fullName
      * @param DateTimeJsonable|null $birthDate
-     * @param string $gender
-     * @param string $email
+     * @param string|null $gender
+     * @param string|null $email
      * @param string|null $phoneNumber
      */
-    public function __construct(string $id, DateTimeJsonable $createTime, string $fullName, ?DateTimeJsonable $birthDate, string $gender, string $email, ?string $phoneNumber)
+    public function __construct(?string $id = null, ?DateTimeJsonable $createTime = null, ?string $fullName = null, ?DateTimeJsonable $birthDate = null, ?string $gender = null, ?string $email = null, ?string $phoneNumber = null)
     {
         $this->id = $id;
         $this->createTime = $createTime;
@@ -35,32 +35,32 @@ class UserDto extends AbstractDto
         $this->phoneNumber = $phoneNumber;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(string $id): void
+    public function setId(?string $id): void
     {
         $this->id = $id;
     }
 
-    public function getCreateTime(): DateTimeJsonable
+    public function getCreateTime(): ?DateTimeJsonable
     {
         return $this->createTime;
     }
 
-    public function setCreateTime(DateTimeJsonable $createTime): void
+    public function setCreateTime(?DateTimeJsonable $createTime): void
     {
         $this->createTime = $createTime;
     }
 
-    public function getFullName(): string
+    public function getFullName(): ?string
     {
         return $this->fullName;
     }
 
-    public function setFullName(string $fullName): void
+    public function setFullName(?string $fullName): void
     {
         $this->fullName = $fullName;
     }
@@ -75,22 +75,22 @@ class UserDto extends AbstractDto
         $this->birthDate = $birthDate;
     }
 
-    public function getGender(): string
+    public function getGender(): ?string
     {
         return $this->gender;
     }
 
-    public function setGender(string $gender): void
+    public function setGender(?string $gender): void
     {
         $this->gender = $gender;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(?string $email): void
     {
         $this->email = $email;
     }
@@ -104,6 +104,8 @@ class UserDto extends AbstractDto
     {
         $this->phoneNumber = $phoneNumber;
     }
+
+
 
     protected static function getDtoTypes(): array
     {

@@ -12,7 +12,9 @@ class UserRepository extends AbstractRepository
 
     public function createUser(User $user): string
     {
-        $user->setCreateTime(new \DateTime());
+        if ($user->getId() === null) {
+            $user->setCreateTime(new \DateTime());
+        }
         $this->save($user);
         return $user->getId();
     }

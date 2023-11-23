@@ -70,6 +70,7 @@ class AuthorizationController
     {
         $editDto = UserEditDto::fromArray($request->getBodyJson());
         $user = $this->userRepository->findById($this->tokenService->getCurrentUserId());
+        $user = $user->outsideUpdateFromDto($editDto);
         $id = $this->userRepository->createUser($user);
         return $this->view->render(['id' => $id]);
     }
