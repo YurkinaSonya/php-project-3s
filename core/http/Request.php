@@ -41,6 +41,14 @@ class Request
         return $this->headers;
     }
 
+    public function getHeader(string $headerName, mixed $default = null) : mixed
+    {
+        if (!array_key_exists($headerName, $this->headers)) {
+            return $default;
+        }
+        return $this->headers[$headerName];
+    }
+
     public function getMethod(): string
     {
         return $this->method;
@@ -68,11 +76,11 @@ class Request
         }
         return $this->query[$name];
     }
-
     public function getBody(): string
     {
         return $this->body;
     }
+
     public function getBodyJson(): ?array
     {
         try {
