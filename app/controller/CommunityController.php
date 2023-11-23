@@ -38,7 +38,7 @@ class CommunityController
         if ($community === null) {
             return null;
         }
-        return new CommunityDto(...array_values($community->toArray()));
+        return CommunityDto::fromArray($community->toArray());
     }
 
     /**

@@ -66,6 +66,21 @@ abstract class AbstractUserValidator extends Validator
         }
         return true;
     }
+
+    protected function validateBirthDate(string $date) : bool
+    {
+        if($this->validateDate($date)) {
+            $dateWithType = new \DateTime($date);
+            $currentDate = new \DateTime();
+            if ($dateWithType > $currentDate) {
+                $this->errors[] = 'you can not be born in the future))))';
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     protected function validatePhoneNumber(string $phoneNumber) :bool
     {
         if (preg_match('/^[\d|\-|\+]+$/',$phoneNumber)) {

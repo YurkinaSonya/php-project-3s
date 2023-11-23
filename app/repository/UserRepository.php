@@ -4,34 +4,17 @@ namespace app\repository;
 
 use app\model\User;
 use core\db\Handler;
+use core\model\AbstractModel;
 use core\repository\AbstractRepository;
 
 class UserRepository extends AbstractRepository
 {
 
-    private Handler $db;
-
-    /**
-     * @param Handler $db
-     */
-    public function __construct(Handler $db)
+    public function createUser(User $user): string
     {
-        $this->db = $db;
-    }
-    public function createUser($email, $password, $fullName, $birthDate, $gender, $phoneNumber): string
-    {
-        $id = $this->generateUuid();
-        $this->db->insert('user', [
-            'id' => $id,
-            'email' => $email,
-            'password' => $password,
-            'full_name' => $fullName,
-            'birth_date' => $birthDate,
-            'gender' => $gender,
-            'phone_number' => $phoneNumber,
-            'create_time' => new \DateTime()
-        ]);
-        return $id;
+        $user->setCreateTime(new \DateTime());
+        $this->save($user);
+        return $user->getId();
     }
 
     public function findByEmail(string $email, ?string $password = null) : ?User
@@ -41,22 +24,25 @@ class UserRepository extends AbstractRepository
             $sql .= ' AND password = "' . $password . '"';
         }
         $result = $this->db->selectOne($sql);
-        return $this->arrayToModel($result);
+        //var_export($result); die;
+        return $result ? User::fromArray($result) : null;
     }
 
-    protected function getModelClass(): string
+    public function findById(string $id) : ?User
     {
-        return User::class;
+        $sql = 'SELECT * FROM user WHERE id = "' . $id . '"';
+        $result = $this->db->selectOne($sql);
+        return $result ? User::fromArray($result) : null;
     }
 
-    protected function getModelDbFields(): array
+    public function updateUser()
     {
-        return ['id', 'email', 'password', 'create_time', 'full_name', 'gender', 'birth_date', 'phone_number'];
+
     }
 
-    protected function getModelDbComplexFields(): array
+    protected function getTableName(): string
     {
-        return ['create_time' => \DateTime::class, 'birth_date' => \DateTime::class];
+        return 'user';
     }
 
 

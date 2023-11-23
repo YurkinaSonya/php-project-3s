@@ -1,15 +1,16 @@
 <?php
 
-use app\controller\IndexController;
-use app\controller\CommunityController;
 use app\controller\AuthorizationController;
-use app\repository\CommunityRepository;
-use app\repository\UserRepository;
-use app\repository\TokenRepository;
-use app\service\TokenService;
+use app\controller\CommunityController;
+use app\controller\IndexController;
 use app\middleware\LoginValidator;
 use app\middleware\RegisterValidator;
+use app\middleware\TokenMiddleware;
+use app\repository\CommunityRepository;
+use app\repository\TokenRepository;
+use app\repository\UserRepository;
 use app\service\EncryptService;
+use app\service\TokenService;
 
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
@@ -50,7 +51,7 @@ $svc['app.controller.authorization'] = \core\ServiceContainer::share(static func
 });
 
 $svc['app.service.tokens'] = \core\ServiceContainer::share(static function ($svc) {
-    return new TokenService($svc['app.repository.tokens']);
+    return new TokenService($svc['app.repository.tokens'], $svc['core.http.request']);
 });
 
 $svc['app.service.encrypt'] = \core\ServiceContainer::share(static function ($svc) {
@@ -70,6 +71,12 @@ $svc['app.middleware.login'] = \core\ServiceContainer::share(static function ($s
         $svc['app.repository.users'],
         $svc['app.service.tokens'],
         $svc['app.service.encrypt']
+    );
+});
+
+$svc['app.middleware.token'] = \core\ServiceContainer::share(static function ($svc) {
+    return new TokenMiddleware(
+        $svc['app.service.tokens']
     );
 });
 

@@ -4,11 +4,11 @@ namespace app\repository;
 
 use app\model\Token;
 use core\db\Handler;
+use core\model\AbstractModel;
 use core\repository\AbstractRepository;
 
 class TokenRepository extends AbstractRepository
 {
-    private Handler $db;
     private int $ttl;
 
     /**
@@ -17,9 +17,10 @@ class TokenRepository extends AbstractRepository
      */
     public function __construct(Handler $db, int $ttl)
     {
-        $this->db = $db;
+        parent::__construct($db);
         $this->ttl = $ttl;
     }
+
 
     public function createToken(string $userId, string $token): void
     {
@@ -34,20 +35,17 @@ class TokenRepository extends AbstractRepository
         ]);
     }
 
-
-    protected function getModelClass(): string
+    public function findByToken(string $token) : ?Token
     {
-        return Token::class;
+        $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
+        $sql = 'SELECT * FROM user_token WHERE `value` = "' . $token . '" AND expire_time > "' . $currentDate . '" AND logout_time IS NULL';
+        $result = $this->db->selectOne($sql);
+        return Token::fromArray($result);
     }
 
-    protected function getModelDbFields(): array
+    protected function getTableName(): string
     {
-        return ['id', 'user_id', 'value', 'create_time', 'expire_time', 'logout_time'];
-    }
-
-    protected function getModelDbComplexFields(): array
-    {
-        return ['create_time', 'expire_time', 'logout_time'];
+        return 'user_token';
     }
 
 

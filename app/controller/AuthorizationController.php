@@ -3,7 +3,10 @@
 namespace app\controller;
 
 use app\dto\LoginCredentialsDto;
+use app\dto\UserDto;
+use app\dto\UserEditDto;
 use app\dto\UserRegisterDto;
+use app\model\User;
 use app\repository\TokenRepository;
 use app\repository\UserRepository;
 use app\service\EncryptService;
@@ -38,10 +41,11 @@ class AuthorizationController
 
     public function register(Route $route, Request $request) : Response
     {
-        $bodyArray = $request->getBodyJson();
         $registerDto = UserRegisterDto::fromArray($request->getBodyJson());
         $registerDto->setPassword($this->encryptService->encryptPassword($registerDto->getPassword()));
-        $userId = $this->userRepository->createUser(...$registerDto->toArray());
+        $dtoArray = $registerDto->toArray();
+        $user = User::fromArray($dtoArray);
+        $userId = $this->userRepository->createUser($user);
         $token = $this->tokenService->createToken($userId);
         return $this->view->render(['token' => $token]);
     }
@@ -52,6 +56,32 @@ class AuthorizationController
         $user = $this->userRepository->findByEmail($loginDto->getEmail());
         $token = $this->tokenService->createToken($user->getId());
         return $this->view->render(['token' => $token]);
+    }
+
+    public function profile(Route $route, Request $request) : Response
+    {
+        $id = $this->tokenService->getCurrentUserId();
+        $user = $this->userRepository->findById($id);
+        $userDto = $this->hydrateUserDto($user);
+        return $this->view->render($userDto->toArray());
+    }
+
+    public function edit(Route $route, Request $request) : Response
+    {
+        $editDto = UserEditDto::fromArray($request->getBodyJson());
+        $user = $this->userRepository->findById($this->tokenService->getCurrentUserId());
+        $id = $this->userRepository->createUser($user);
+        return $this->view->render(['id' => $id]);
+    }
+
+    private function hydrateUserDto(?User $user) : ?UserDto
+    {
+        if ($user === null) {
+            return null;
+        }
+        $userArray = $user->toArray();
+        unset($userArray['password']);
+        return UserDto::fromArray($userArray);
     }
 
 }

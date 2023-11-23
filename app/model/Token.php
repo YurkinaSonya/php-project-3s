@@ -92,6 +92,20 @@ class Token extends AbstractModel
         $this->logoutTime = $logoutTime;
     }
 
+    public static function getModelDbFields(): array
+    {
+        return ['id' => 'id', 'user_id' => 'userId', 'value' => 'value', 'create_time' => 'createTime', 'expire_time' => 'expireTime', 'logout_time' => 'logoutTime'];
+    }
+
+    protected static function getModelDbComplexFields(): array
+    {
+        return ['create_time' => \DateTime::class, 'expire_time' => \DateTime::class, 'logout_time' => \DateTime::class];
+    }
+
+    static protected function getModelDoubleFieldExample(): ?string
+    {
+        return 'create_time';
+    }
 
 
 }

@@ -7,13 +7,13 @@ use core\types\DateTimeJsonable;
 
 class UserDto extends AbstractDto
 {
-    private string $id;
-    private DateTimeJsonable $createTime;
-    private string $fullName;
-    private ?DateTimeJsonable $birthDate;
-    private string $gender;
-    private string $email;
-    private ?string $phoneNumber;
+    protected string $id;
+    protected DateTimeJsonable $createTime;
+    protected string $fullName;
+    protected ?DateTimeJsonable $birthDate;
+    protected string $gender;
+    protected string $email;
+    protected ?string $phoneNumber;
 
     /**
      * @param string $id
@@ -75,12 +75,12 @@ class UserDto extends AbstractDto
         $this->birthDate = $birthDate;
     }
 
-    public function getstring(): string
+    public function getGender(): string
     {
         return $this->gender;
     }
 
-    public function setstring(string $gender): void
+    public function setGender(string $gender): void
     {
         $this->gender = $gender;
     }

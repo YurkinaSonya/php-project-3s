@@ -7,22 +7,22 @@ use core\types\DateTimeJsonable;
 
 class Community extends AbstractModel
 {
-    protected string $id;
-    protected DateTimeJsonable $createTime;
+    protected ?string $id;
+    protected \DateTime $createTime;
     protected string $name;
     protected string $description;
     protected bool $isClosed;
     protected int $subscribersCount;
 
     /**
-     * @param string $id
-     * @param DateTimeJsonable $createTime
+     * @param ?string $id
+     * @param \DateTime $createTime
      * @param string $name
      * @param string $description
      * @param bool $isClosed
      * @param int $subscribersCount
      */
-    public function __construct(string $id, DateTimeJsonable $createTime, string $name, string $description, bool $isClosed, int $subscribersCount)
+    public function __construct(?string $id = null, \DateTime $createTime, string $name, string $description, bool $isClosed, int $subscribersCount)
     {
         $this->id = $id;
         $this->createTime = $createTime;
@@ -32,7 +32,7 @@ class Community extends AbstractModel
         $this->subscribersCount = $subscribersCount;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -42,12 +42,12 @@ class Community extends AbstractModel
         $this->id = $id;
     }
 
-    public function getCreateTime(): DateTimeJsonable
+    public function getCreateTime(): \DateTime
     {
         return $this->createTime;
     }
 
-    public function setCreateTime(DateTimeJsonable $createTime): void
+    public function setCreateTime(\DateTime $createTime): void
     {
         $this->createTime = $createTime;
     }
@@ -92,6 +92,19 @@ class Community extends AbstractModel
         $this->subscribersCount = $subscribersCount;
     }
 
+    public static function getModelDbFields(): array
+    {
+        return ['id' => 'id', 'create_time' => 'createTime', 'name' => 'name', 'description' => 'description', 'is_closed' => 'isClosed', 'subscribers_count' => 'subscribersCount'];
+    }
+
+    protected static function getModelDbComplexFields(): array
+    {
+        return ['create_time' => \DateTime::class];
+    }
+    static protected function getModelDoubleFieldExample(): ?string
+    {
+        return 'create_time';
+    }
 
 
 }

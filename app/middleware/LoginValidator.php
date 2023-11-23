@@ -12,7 +12,7 @@ class LoginValidator extends AbstractUserValidator
     public function validate(Route $route, Request $request): void
     {
         $body = $request->getBodyJson();
-        $this->checkEmpty(['email' => 'email', 'password' => 'password'], $body);
+        $this->checkEmpty(['email' => 'Email', 'password' => 'Password'], $body);
         if ($this->errors) {
             return;
         }

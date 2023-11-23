@@ -11,7 +11,7 @@ class RegisterValidator extends AbstractUserValidator
     public function validate(Route $route, Request $request): void
     {
         $body = $request->getBodyJson();
-        $this->checkEmpty(['fullName', 'password', 'email', 'gender'], $body);
+        $this->checkEmpty(['fullName' => 'Full name', 'password' => 'Password', 'email' => 'Email', 'gender' => 'Gender'], $body);
         if ($this->errors) {
             return;
         }
@@ -37,7 +37,7 @@ class RegisterValidator extends AbstractUserValidator
             return;
         }
 
-        if (key_exists('birthDate', $body) and !$this->validateDate($body['birthDate'])) {
+        if (key_exists('birthDate', $body) and !$this->validateBirthDate($body['birthDate'])) {
             return;
         }
 

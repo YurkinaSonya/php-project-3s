@@ -4,16 +4,11 @@ namespace app\repository;
 
 use app\model\Community;
 use core\db\Handler;
+use core\model\AbstractModel;
 use core\repository\AbstractRepository;
 
 class CommunityRepository extends AbstractRepository
 {
-    private Handler $db;
-
-    public function __construct(Handler $db)
-    {
-        $this->db = $db;
-    }
 
     /**
      * @param int $offset
@@ -23,23 +18,12 @@ class CommunityRepository extends AbstractRepository
     public function getList(): array
     {
         $sql = 'SELECT * FROM community ORDER BY id ASC';
-        return array_map(fn($row) => $this->arrayToModel($row), $this->db->select($sql));
+        return array_map(fn($row) => Community::fromArray($row), $this->db->select($sql));
     }
 
-    protected function getModelClass(): string
+
+    protected function getTableName(): string
     {
-        return Community::class;
+        return 'community';
     }
-
-    protected function getModelDbFields(): array
-    {
-        return ['id', 'create_time', 'name', 'description', 'is_closed', 'subscribers_count'];
-    }
-
-    protected function getModelDbComplexFields(): array
-    {
-        return ['create_time'];
-    }
-
-
 }
