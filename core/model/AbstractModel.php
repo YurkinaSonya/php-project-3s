@@ -2,6 +2,8 @@
 
 namespace core\model;
 
+use core\dto\AbstractDto;
+
 abstract class AbstractModel
 {
     abstract public function getId() : ?string;
@@ -83,6 +85,25 @@ abstract class AbstractModel
             }
         }
         return $dbValue;
+    }
+
+    public function outsideUpdateFromDto(AbstractDto $dto) : AbstractModel
+    {
+        $modelArray = static::toArray();
+        return static::updateFromDto($dto, $modelArray);
+    }
+
+    protected static function updateFromDto(AbstractDto $dto, array $modelArray) : AbstractModel
+    {
+        $dtoArray = $dto->toArray();
+//        var_export($modelArray); die;
+        $modelFields = static::getModelDbFields();
+        foreach ($modelFields as $dbField=>$field) {
+            if (array_key_exists($field, $dtoArray) and $dtoArray[$field] !== null) {
+                $modelArray[$field] = $dtoArray[$field];
+            }
+        }
+        return self::fromArray($modelArray);
     }
 
 
