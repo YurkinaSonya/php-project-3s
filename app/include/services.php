@@ -11,10 +11,12 @@ use app\repository\TokenRepository;
 use app\repository\UserRepository;
 use app\service\EncryptService;
 use app\service\TokenService;
+use app\repository\SubscribeRepository;
+use app\middleware\SubscribeValidator;
+use app\middleware\UnsubscribeValidator;
+use app\middleware\CommunityValidator;
+use app\middleware\ProfileValidator;
 
-$svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
-    return new IndexController();
-});
 
 $svc['app.repository.communities'] = \core\ServiceContainer::share(static function ($svc) {
     return new CommunityRepository($svc['core.db.handler']);
@@ -33,9 +35,22 @@ $svc['app.repository.users'] = \core\ServiceContainer::share(static function ($s
     );
 });
 
+$svc['app.repository.subscribers'] = \core\ServiceContainer::share(static function ($svc) {
+    return new SubscribeRepository(
+        $svc['core.db.handler']
+    );
+});
+
+$svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
+    return new IndexController();
+});
+
 $svc['app.controller.communities'] = \core\ServiceContainer::share(static function ($svc) {
     return new CommunityController(
         $svc['app.repository.communities'],
+        $svc['app.repository.users'],
+        $svc['app.repository.subscribers'],
+        $svc['app.service.tokens'],
         $svc['core.view.json'],
         $svc['config.per_page']
     );
@@ -80,5 +95,32 @@ $svc['app.middleware.token'] = \core\ServiceContainer::share(static function ($s
     );
 });
 
+$svc['app.middleware.subscribe'] = \core\ServiceContainer::share(static function ($svc) {
+    return new SubscribeValidator(
+        $svc['app.repository.subscribers'],
+        $svc['app.service.tokens']
+    );
+});
+
+$svc['app.middleware.unsubscribe'] = \core\ServiceContainer::share(static function ($svc) {
+    return new UnsubscribeValidator(
+        $svc['app.repository.subscribers'],
+        $svc['app.service.tokens']
+    );
+});
+
+$svc['app.middleware.communities'] = \core\ServiceContainer::share(static function ($svc) {
+    return new CommunityValidator(
+        $svc['app.repository.communities']
+    );
+});
+
+$svc['app.middleware.profile'] = \core\ServiceContainer::share(static function ($svc) {
+    return new ProfileValidator(
+        $svc['app.repository.users'],
+        $svc['app.service.tokens'],
+        $svc['app.service.encrypt']
+    );
+});
 
 

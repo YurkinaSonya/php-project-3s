@@ -2,30 +2,32 @@
 
 namespace app\middleware;
 
-use app\repository\UserRepository;
 use core\http\Request;
+use core\http\Response;
+use core\middleware\Validator;
 use core\Route;
 
-class RegisterValidator extends AbstractUserValidator
+class ProfileValidator extends AbstractUserValidator
 {
-    public function validate(Route $route, Request $request): void
+
+    protected function validate(Route $route, Request $request): void
     {
+        $userId = $this->tokenService->getCurrentUserId();
+        $user = $this->userRepository->findById($userId);
         $body = $request->getBodyJson();
-        $this->checkEmpty(['fullName' => 'Full name', 'password' => 'Password', 'email' => 'Email', 'gender' => 'Gender'], $body);
+        $this->checkEmpty(['fullName' => 'Full name', 'email' => 'Email', 'gender' => 'Gender'], $body);
         if ($this->errors) {
             return;
         }
-
         if (!$this->validateEmail($body['email'])) {
             $this->errors[] = 'The Email field is not a valid e-mail address';
             return;
         }
-
-        if (!$this->validatePassword($body['password'])) {
+        if (!$this->validateName($body['fullName'])) {
             return;
         }
-
-        if (!$this->validateName($body['fullName'])) {
+        if ($user->getEmail() != $body['email'] and $this->checkUserExists($body['email'])) {
+            $this->errors[] = 'User with this Email already exists';
             return;
         }
 
@@ -41,11 +43,5 @@ class RegisterValidator extends AbstractUserValidator
             return;
         }
 
-        if (!$this->checkUserExists($body['email'])) {
-            return;
-        }
-
-        $this->errors[] = sprintf('User with \'%s\' email already exists', $body['email']);
     }
-
 }

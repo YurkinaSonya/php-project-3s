@@ -9,7 +9,6 @@ use core\repository\AbstractRepository;
 
 class UserRepository extends AbstractRepository
 {
-
     public function createUser(User $user): string
     {
         $user->setCreateTime(new \DateTime());
@@ -25,7 +24,7 @@ class UserRepository extends AbstractRepository
 
     public function findByEmail(string $email, ?string $password = null) : ?User
     {
-        $sql = 'SELECT * FROM user WHERE email = "' . $email . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE email = "' . $email . '"';
         if ($password !== null) {
             $sql .= ' AND password = "' . $password . '"';
         }
@@ -36,9 +35,16 @@ class UserRepository extends AbstractRepository
 
     public function findById(string $id) : ?User
     {
-        $sql = 'SELECT * FROM user WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
         $result = $this->db->selectOne($sql);
         return $result ? User::fromArray($result) : null;
+    }
+
+    public function getListByIds(array $ids): array
+    {
+        $in = '("' . implode('","', $ids) .'")';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id IN ' . $in;
+        return array_map(fn($row) => User::fromArray($row), $this->db->select($sql));
     }
 
     protected function getTableName(): string
