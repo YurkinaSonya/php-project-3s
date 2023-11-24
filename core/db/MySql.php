@@ -57,6 +57,20 @@ class MySql implements Handler
         return mysqli_fetch_assoc($this->query($sql));
     }
 
+    public function selectColumn(string $sql, string $columnName) : array
+    {
+        $query = $this->query($sql);
+        $result = [];
+        while ($row = mysqli_fetch_assoc($query)) {
+            $result[] = $row[$columnName];
+        }
+        return $result;
+    }
+    public function selectColumnOne(string $sql, string $columnName) : mixed
+    {
+        return mysqli_fetch_assoc($this->query($sql))[$columnName];
+    }
+
     public function insert($tableName, $values): bool|int
     {
         return $this->execute(sprintf(
@@ -72,7 +86,7 @@ class MySql implements Handler
             'UPDATE `%s` set %s%s',
             $tableName,
             implode(', ', $this->valuesToString($values)),
-            $where ? ('WHERE ' . $where) : ''
+            $where ? (' WHERE ' . $where) : ''
         ));
     }
 
