@@ -59,16 +59,16 @@ class MySql implements Handler
 
     public function selectColumn(string $sql, string $columnName) : array
     {
-        $query = $this->query($sql);
+        $select = $this->select($sql);
         $result = [];
-        while ($row = mysqli_fetch_assoc($query)) {
+        foreach ($select as  $row) {
             $result[] = $row[$columnName];
         }
         return $result;
     }
     public function selectColumnOne(string $sql, string $columnName) : mixed
     {
-        return mysqli_fetch_assoc($this->query($sql))[$columnName];
+        return $this->selectOne($sql)[$columnName];
     }
 
     public function insert($tableName, $values): bool|int
