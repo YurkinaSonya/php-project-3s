@@ -19,6 +19,7 @@ use app\middleware\ProfileValidator;
 use app\repository\AddressRepository;
 use app\controller\AddressController;
 use app\middleware\AddressValidator;
+use app\repository\AdministratorRepository;
 
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
@@ -29,6 +30,12 @@ $svc['app.repository.address'] = \core\ServiceContainer::share(static function (
 
 $svc['app.repository.communities'] = \core\ServiceContainer::share(static function ($svc) {
     return new CommunityRepository(
+        $svc['core.db.handler']
+    );
+});
+
+$svc['app.repository.admins'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AdministratorRepository(
         $svc['core.db.handler']
     );
 });
@@ -68,6 +75,7 @@ $svc['app.controller.communities'] = \core\ServiceContainer::share(static functi
         $svc['app.repository.communities'],
         $svc['app.repository.users'],
         $svc['app.repository.subscribers'],
+        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['core.view.json'],
         $svc['config.per_page']

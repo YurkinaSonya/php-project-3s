@@ -10,6 +10,7 @@ use app\dto\UserDto;
 use app\model\Community;
 use app\model\Subscribe;
 use app\model\User;
+use app\repository\AdministratorRepository;
 use app\repository\CommunityRepository;
 use app\repository\SubscribeRepository;
 use app\repository\UserRepository;
@@ -25,6 +26,7 @@ class CommunityController
     private CommunityRepository $repository;
     private UserRepository $userRepository;
     private SubscribeRepository $subscribeRepository;
+    private AdministratorRepository$administratorRepository;
     private TokenService $tokenService;
     private JsonView $view;
     private int $pageCount;
@@ -36,15 +38,17 @@ class CommunityController
      * @param CommunityRepository $repository
      * @param UserRepository $userRepository
      * @param SubscribeRepository $subscribeRepository
+     * @param AdministratorRepository $administratorRepository
      * @param TokenService $tokenService
      * @param JsonView $view
      * @param int $pageCount
      */
-    public function __construct(CommunityRepository $repository, UserRepository $userRepository, SubscribeRepository $subscribeRepository, TokenService $tokenService, JsonView $view, int $pageCount)
+    public function __construct(CommunityRepository $repository, UserRepository $userRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, JsonView $view, int $pageCount)
     {
         $this->repository = $repository;
         $this->userRepository = $userRepository;
         $this->subscribeRepository = $subscribeRepository;
+        $this->administratorRepository = $administratorRepository;
         $this->tokenService = $tokenService;
         $this->view = $view;
         $this->pageCount = $pageCount;
@@ -65,7 +69,7 @@ class CommunityController
         $community = $this->repository->getCommunity($route->getParam(0));
         $administrators = array_map(
             fn($admin) => $this->hydrateUserDto($admin)->toArray(),
-            $this->userRepository->getListByIds($this->repository->getAdministratorIds($community->getId()))
+            $this->userRepository->getListByIds($this->administratorRepository->getAdministratorIds($community->getId()))
         );
         $dto = $this->hydrateCommunityFullDto($community, $administrators);
         //var_export($dto); die;
@@ -76,7 +80,7 @@ class CommunityController
     {
         $userId = $this->tokenService->getCurrentUserId();
         $subscribes = $this->subscribeRepository->getSubscribesOfUser($userId);
-        $admins =$this->repository->getAdminRolesOfUser($userId);
+        $admins =$this->administratorRepository->getAdminRolesOfUser($userId);
         $array = $this->getArrayOfCommunityUserDto($userId, $subscribes, $admins);
         return $this->view->render(array_map(fn($dto) => $dto->toArray(), $array));
     }
@@ -114,7 +118,7 @@ class CommunityController
 
     private function getRoleOfUser(string $userId, string $communityId) : ?string
     {
-        if ($this->repository->findAdminByUserIdCommunityId($userId, $communityId) === null) {
+        if ($this->administratorRepository->findAdminByUserIdCommunityId($userId, $communityId) === null) {
             if ($this->subscribeRepository->findByUserIdCommunityId($userId, $communityId) === null) {
                 return null;
             }

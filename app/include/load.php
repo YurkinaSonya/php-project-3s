@@ -20,6 +20,7 @@ require_once INC_APP_DTO . '/UserRegisterDto.php';
 
 require_once INC_APP_REPOSITORY . '/AddressRepository.php';
 require_once INC_APP_REPOSITORY . '/CommunityRepository.php';
+require_once INC_APP_REPOSITORY . '/AdministratorRepository.php';
 require_once INC_APP_REPOSITORY . '/TokenRepository.php';
 require_once INC_APP_REPOSITORY . '/UserRepository.php';
 require_once INC_APP_REPOSITORY . '/SubscribeRepository.php';
