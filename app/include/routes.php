@@ -12,6 +12,17 @@ $router->addRoute('GET', '/', fn(
 ) => $svc['app.controller.index']->index($route, $request));
 
 
+/** @see \app\controller\AddressController::search() */
+$router->addRoute('GET', '/address/search', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.address']->search($route, $request))->addMiddleware($svc['app.middleware.address']);
+
+/** @see \app\controller\AddressController::chain() */
+$router->addRoute('GET', '/address/chain', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.address']->chain($route, $request))->addMiddleware($svc['app.middleware.address']);
 
 
 /** @see \app\controller\CommunityController::list() */

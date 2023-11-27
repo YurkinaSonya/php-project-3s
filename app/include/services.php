@@ -16,10 +16,21 @@ use app\middleware\SubscribeValidator;
 use app\middleware\UnsubscribeValidator;
 use app\middleware\CommunityValidator;
 use app\middleware\ProfileValidator;
+use app\repository\AddressRepository;
+use app\controller\AddressController;
+use app\middleware\AddressValidator;
 
+
+$svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddressRepository(
+        $svc['core.db.handler']
+    );
+});
 
 $svc['app.repository.communities'] = \core\ServiceContainer::share(static function ($svc) {
-    return new CommunityRepository($svc['core.db.handler']);
+    return new CommunityRepository(
+        $svc['core.db.handler']
+    );
 });
 
 $svc['app.repository.tokens'] = \core\ServiceContainer::share(static function ($svc) {
@@ -45,6 +56,13 @@ $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($s
     return new IndexController();
 });
 
+$svc['app.controller.address'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddressController(
+        $svc['app.repository.address'],
+        $svc['core.view.json']
+    );
+});
+
 $svc['app.controller.communities'] = \core\ServiceContainer::share(static function ($svc) {
     return new CommunityController(
         $svc['app.repository.communities'],
@@ -55,6 +73,7 @@ $svc['app.controller.communities'] = \core\ServiceContainer::share(static functi
         $svc['config.per_page']
     );
 });
+
 
 $svc['app.controller.authorization'] = \core\ServiceContainer::share(static function ($svc) {
     return new AuthorizationController(
@@ -71,6 +90,12 @@ $svc['app.service.tokens'] = \core\ServiceContainer::share(static function ($svc
 
 $svc['app.service.encrypt'] = \core\ServiceContainer::share(static function ($svc) {
     return new EncryptService($svc['config.password.salt']);
+});
+
+$svc['app.middleware.address'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddressValidator(
+        $svc['app.repository.address']
+    );
 });
 
 $svc['app.middleware.register'] = \core\ServiceContainer::share(static function ($svc) {
