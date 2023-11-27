@@ -63,6 +63,11 @@ $router->addRoute('DELETE', '/community/([a-zA-Z0-9\-]+)/unsubscribe', fn(
 ) => $svc['app.controller.communities']->unsubscribe($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.communities'])->addMiddleware($svc['app.middleware.unsubscribe']);
 
 
+/** @see \app\controller\PostController::listOfTags() */
+$router->addRoute('GET', '/tag', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->listOfTags($route, $request));
 
 /** @see \app\controller\AuthorizationController::register() */
 $router->addRoute('POST', '/register', fn(

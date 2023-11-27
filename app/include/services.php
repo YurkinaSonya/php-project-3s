@@ -20,7 +20,8 @@ use app\repository\AddressRepository;
 use app\controller\AddressController;
 use app\middleware\AddressValidator;
 use app\repository\AdministratorRepository;
-
+use app\repository\TagRepository;
+use app\controller\PostController;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -40,6 +41,7 @@ $svc['app.repository.admins'] = \core\ServiceContainer::share(static function ($
     );
 });
 
+
 $svc['app.repository.tokens'] = \core\ServiceContainer::share(static function ($svc) {
     return new TokenRepository(
         $svc['core.db.handler'],
@@ -55,6 +57,12 @@ $svc['app.repository.users'] = \core\ServiceContainer::share(static function ($s
 
 $svc['app.repository.subscribers'] = \core\ServiceContainer::share(static function ($svc) {
     return new SubscribeRepository(
+        $svc['core.db.handler']
+    );
+});
+
+$svc['app.repository.tags'] = \core\ServiceContainer::share(static function ($svc) {
+    return new TagRepository(
         $svc['core.db.handler']
     );
 });
@@ -91,6 +99,15 @@ $svc['app.controller.authorization'] = \core\ServiceContainer::share(static func
         $svc['core.view.json']
     );
 });
+
+$svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($svc) {
+    return new PostController(
+        $svc['app.repository.tags'],
+        $svc['core.view.json']
+    );
+});
+
+
 
 $svc['app.service.tokens'] = \core\ServiceContainer::share(static function ($svc) {
     return new TokenService($svc['app.repository.tokens'], $svc['core.http.request']);

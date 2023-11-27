@@ -53,7 +53,7 @@ class AddressValidator extends Validator
 
     protected function renderErrors(array $errors): Response
     {
-        $response = new Response(json_encode(['errors' => $errors]), 400);
+        $response = new Response(json_encode(['errors' => $errors]), 404);
         $response->addHeader('Content-Type', 'application/json');
         return $response;
     }
