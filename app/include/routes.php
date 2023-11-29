@@ -16,13 +16,13 @@ $router->addRoute('GET', '/', fn(
 $router->addRoute('GET', '/address/search', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.address']->search($route, $request))->addMiddleware($svc['app.middleware.address']);
+) => $svc['app.controller.address']->search($route, $request))->addMiddleware($svc['app.middleware.address.search']);
 
 /** @see \app\controller\AddressController::chain() */
 $router->addRoute('GET', '/address/chain', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.address']->chain($route, $request))->addMiddleware($svc['app.middleware.address']);
+) => $svc['app.controller.address']->chain($route, $request))->addMiddleware($svc['app.middleware.address.chain']);
 
 
 /** @see \app\controller\CommunityController::list() */
@@ -68,6 +68,15 @@ $router->addRoute('GET', '/tag', fn(
     core\Route $route,
     Request    $request
 ) => $svc['app.controller.posts']->listOfTags($route, $request));
+
+/** @see \app\controller\PostController::listOfPosts() */
+$router->addRoute('GET', '/post', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->listOfPosts($route, $request));
+
+
+
 
 /** @see \app\controller\AuthorizationController::register() */
 $router->addRoute('POST', '/register', fn(

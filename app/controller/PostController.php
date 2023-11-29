@@ -25,6 +25,11 @@ class PostController
         $this->view = $view;
     }
 
+    public function listOfPosts(Route $route, Request $request) : Response
+    {
+        return $this->view->render([]);
+    }
+
 
     public function listOfTags(Route $route, Request $request) : Response
     {

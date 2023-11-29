@@ -8,6 +8,7 @@ require_once INC_APP_MODEL . '/User.php';
 require_once INC_APP_MODEL . '/Token.php';
 require_once INC_APP_MODEL . '/Subscribe.php';
 require_once INC_APP_MODEL . '/Tag.php';
+require_once INC_APP_MODEL . '/Post.php';
 
 require_once INC_APP_DTO . '/SearchAddressDto.php';
 require_once INC_APP_DTO . '/CommunityDto.php';
@@ -19,6 +20,8 @@ require_once INC_APP_DTO . '/ResponseDto.php';
 require_once INC_APP_DTO . '/UserEditDto.php';
 require_once INC_APP_DTO . '/UserRegisterDto.php';
 require_once INC_APP_DTO . '/TagDto.php';
+require_once INC_APP_DTO . '/PostDto.php';
+require_once INC_APP_DTO . '/PageInfoDto.php';
 
 require_once INC_APP_REPOSITORY . '/AddressRepository.php';
 require_once INC_APP_REPOSITORY . '/CommunityRepository.php';
@@ -27,6 +30,7 @@ require_once INC_APP_REPOSITORY . '/TokenRepository.php';
 require_once INC_APP_REPOSITORY . '/UserRepository.php';
 require_once INC_APP_REPOSITORY . '/SubscribeRepository.php';
 require_once INC_APP_REPOSITORY . '/TagRepository.php';
+require_once INC_APP_REPOSITORY . '/PostRepository.php';
 
 require_once INC_APP_CONTROLLER . '/IndexController.php';
 require_once INC_APP_CONTROLLER . '/AddressController.php';
@@ -37,7 +41,8 @@ require_once INC_APP_CONTROLLER . '/PostController.php';
 require_once INC_APP_SERVICE . '/TokenService.php';
 require_once INC_APP_SERVICE . '/EncryptService.php';
 
-require_once INC_APP_MIDDLEWARE . '/AddressValidator.php';
+require_once INC_APP_MIDDLEWARE . '/AddressSearchValidator.php';
+require_once INC_APP_MIDDLEWARE . '/AddressChainValidator.php';
 require_once INC_APP_MIDDLEWARE . '/AbstractUserValidator.php';
 require_once INC_APP_MIDDLEWARE . '/LoginValidator.php';
 require_once INC_APP_MIDDLEWARE . '/RegisterValidator.php';

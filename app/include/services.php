@@ -18,10 +18,12 @@ use app\middleware\CommunityValidator;
 use app\middleware\ProfileValidator;
 use app\repository\AddressRepository;
 use app\controller\AddressController;
-use app\middleware\AddressValidator;
+use app\middleware\AddressSearchValidator;
 use app\repository\AdministratorRepository;
 use app\repository\TagRepository;
 use app\controller\PostController;
+use app\repository\PostRepository;
+use app\middleware\AddressChainValidator;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -67,6 +69,12 @@ $svc['app.repository.tags'] = \core\ServiceContainer::share(static function ($sv
     );
 });
 
+$svc['app.repository.posts'] = \core\ServiceContainer::share(static function ($svc) {
+    return new PostRepository(
+        $svc['core.db.handler']
+    );
+});
+
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
 });
@@ -107,8 +115,6 @@ $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($s
     );
 });
 
-
-
 $svc['app.service.tokens'] = \core\ServiceContainer::share(static function ($svc) {
     return new TokenService($svc['app.repository.tokens'], $svc['core.http.request']);
 });
@@ -117,8 +123,14 @@ $svc['app.service.encrypt'] = \core\ServiceContainer::share(static function ($sv
     return new EncryptService($svc['config.password.salt']);
 });
 
-$svc['app.middleware.address'] = \core\ServiceContainer::share(static function ($svc) {
-    return new AddressValidator(
+$svc['app.middleware.address.search'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddressSearchValidator(
+        $svc['app.repository.address']
+    );
+});
+
+$svc['app.middleware.address.chain'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddressChainValidator(
         $svc['app.repository.address']
     );
 });
