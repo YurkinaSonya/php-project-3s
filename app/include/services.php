@@ -110,8 +110,10 @@ $svc['app.controller.authorization'] = \core\ServiceContainer::share(static func
 
 $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($svc) {
     return new PostController(
+        $svc['app.repository.posts'],
         $svc['app.repository.tags'],
-        $svc['core.view.json']
+        $svc['core.view.json'],
+        $svc['config.per_page']
     );
 });
 

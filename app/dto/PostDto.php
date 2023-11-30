@@ -21,7 +21,7 @@ class PostDto extends AbstractDto
     protected int $likes;
     protected int $hasLike;
     protected int $commentsCount;
-    protected array $tags;
+    protected ?array $tags = null;
 
     /**
      * @param string|null $id
@@ -38,9 +38,9 @@ class PostDto extends AbstractDto
      * @param int $likes
      * @param int $hasLike
      * @param int $commentsCount
-     * @param TagDto[] $tags
+     * @param array|null $tags
      */
-    public function __construct(?string $id, DateTimeJsonable $createTime, string $title, string $description, int $readingTime, ?string $image, string $authorId, string $authorName, ?string $communityId, ?string $communityName, ?string $addressId, int $likes, int $hasLike, int $commentsCount, array $tags)
+    public function __construct(?string $id, DateTimeJsonable $createTime, string $title, string $description, int $readingTime, ?string $image, string $authorId, string $authorName, ?string $communityId, ?string $communityName, ?string $addressId, int $likes, int $hasLike, int $commentsCount, ?array $tags = null)
     {
         $this->id = $id;
         $this->createTime = $createTime;
@@ -59,6 +59,15 @@ class PostDto extends AbstractDto
         $this->tags = $tags;
     }
 
+    public function getTags(): ?array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?array $tags): void
+    {
+        $this->tags = $tags;
+    }
 
 
     protected static function getDtoTypes(): array

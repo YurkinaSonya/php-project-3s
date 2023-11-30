@@ -197,7 +197,7 @@ class Post extends AbstractModel
 
     static public function getModelDbFields(): array
     {
-        return ['id' =>'id', 'create_time' => 'createTime', 'title' => 'title', 'description' => 'description', 'reading_time' => 'readingTime', 'author_id' => 'authorId', 'author_name' => 'authorName', 'likes' => 'likes', 'has_like' => 'has_like', 'comments_count' => 'commentsCount', 'image' => 'image', 'community_id' => 'communityId', 'community_name' => 'communityName', 'address_id' => 'addressId'];
+        return ['id' =>'id', 'create_time' => 'createTime', 'title' => 'title', 'description' => 'description', 'reading_time' => 'readingTime', 'author_id' => 'authorId', 'author_name' => 'authorName', 'likes' => 'likes', 'has_like' => 'hasLike', 'comments_count' => 'commentsCount', 'image' => 'image', 'community_id' => 'communityId', 'community_name' => 'communityName', 'address_id' => 'addressId'];
     }
 
     protected static function getModelDbComplexFields(): array
