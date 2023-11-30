@@ -112,6 +112,8 @@ $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($s
     return new PostController(
         $svc['app.repository.posts'],
         $svc['app.repository.tags'],
+        $svc['app.repository.subscribers'],
+        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['core.view.json'],
         $svc['config.per_page']

@@ -7,7 +7,9 @@ use app\dto\PostDto;
 use app\dto\TagDto;
 use app\model\Post;
 use app\model\Tag;
+use app\repository\AdministratorRepository;
 use app\repository\PostRepository;
+use app\repository\SubscribeRepository;
 use app\repository\TagRepository;
 use app\service\TokenService;
 use core\http\Request;
@@ -19,6 +21,8 @@ class PostController
 {
     private PostRepository $postRepository;
     private TagRepository $tagRepository;
+    private SubscribeRepository $subscribeRepository;
+    private AdministratorRepository$administratorRepository;
     private TokenService $tokenService;
     private JsonView $view;
     private int $pageCount;
@@ -26,14 +30,18 @@ class PostController
     /**
      * @param PostRepository $postRepository
      * @param TagRepository $tagRepository
+     * @param SubscribeRepository $subscribeRepository
+     * @param AdministratorRepository $administratorRepository
      * @param TokenService $tokenService
      * @param JsonView $view
      * @param int $pageCount
      */
-    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, TokenService $tokenService, JsonView $view, int $pageCount)
+    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, JsonView $view, int $pageCount)
     {
         $this->postRepository = $postRepository;
         $this->tagRepository = $tagRepository;
+        $this->subscribeRepository = $subscribeRepository;
+        $this->administratorRepository = $administratorRepository;
         $this->tokenService = $tokenService;
         $this->view = $view;
         $this->pageCount = $pageCount;
@@ -45,7 +53,7 @@ class PostController
         $userId = $this->tokenService->getCurrentUserId();
         $pageSize = $request->getQueryParam('size', $this->pageCount);
         $currentPage = $request->getQueryParam('page', 1);
-        $whereTerms = $this->generateWhereTerms($request);
+        $whereTerms = $this->generateWhereTerms($request, $userId);
         $order = null;
         if ($request->getQueryParam('sorting')) {
             $order = ' ORDER BY ';
@@ -78,24 +86,40 @@ class PostController
         return $this->view->render([$posts, $pageInfo->toArray()]);
     }
 
-    private function generateWhereTerms(Request $request) : array
+    private function generateWhereTerms(Request $request, ?string $userId) : array
     {
         /**
         $onlyMyCommunities = $request->getQueryParam('onlyMyCommunities');
          */
         $whereTerms = [];
-        if ($request->getQueryParam('tags')) {
-            $tags = '("' . implode('","', $request->getQueryParam('tags')) .'")';
-            $whereTerms[] = ' JOIN post_tags ON post.id = post_tags.post_id WHERE post_tags.tag_id in ' . $tags;
-        }
         if ($request->getQueryParam('author')) {
-            $whereTerms[] = '  WHERE author_name LIKE "%' . $request->getQueryParam('author') . '%"';
+            $whereTerms[] = ' post.author_name LIKE "%' . $request->getQueryParam('author') . '%"';
         }
         if ($request->getQueryParam('min')) {
-            $whereTerms[] = '  WHERE reading_time >= ' . $request->getQueryParam('min');
+            $whereTerms[] = ' post.reading_time >= ' . $request->getQueryParam('min');
         }
         if ($request->getQueryParam('max')) {
-            $whereTerms[] = '  WHERE reading_time <= ' . $request->getQueryParam('max');
+            $whereTerms[] = ' post.reading_time <= ' . $request->getQueryParam('max');
+        }
+        if ($request->getQueryParam('onlyMyCommunities') === 'true' and $userId !== null) {
+            $subscribes = $this->subscribeRepository->getSubscribesOfUser($userId);
+            $admins =$this->administratorRepository->getAdminRolesOfUser($userId);
+            $arrayOfMyCommunities = [];
+            foreach ($subscribes as $subCommunityId) {
+                $arrayOfMyCommunities[] = $subCommunityId;
+            }
+            foreach ($admins as $adminCommunityId) {
+                if (!in_array($adminCommunityId, $arrayOfMyCommunities)) {
+                    $arrayOfMyCommunities[] = $adminCommunityId;
+                }
+            }
+            $myCommunities = '("' . implode('","', $arrayOfMyCommunities) .'")';
+            //var_export($myCommunities); die;
+            $whereTerms[] = ' post.community_id in ' . $myCommunities;
+        }
+        if ($request->getQueryParam('tags')) {
+            $tags = '("' . implode('","', $request->getQueryParam('tags')) .'")';
+            $whereTerms[] = ' post_tags.tag_id in ' . $tags;
         }
         return $whereTerms;
     }

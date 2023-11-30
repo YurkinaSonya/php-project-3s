@@ -22,9 +22,9 @@ class PostRepository extends AbstractRepository
 
     private function sqlWithTerms(array $whereTerms) : string
     {
-        $sql = ' FROM ' . $this->getTableName();
+        $sql = ' FROM ' . $this->getTableName() . ' JOIN post_tags ON post.id = post_tags.post_id ';
         if ($whereTerms) {
-            $sql.= implode(' AND ', $whereTerms);
+            $sql.= ' WHERE ' . implode(' AND ', $whereTerms);
         }
         return $sql;
     }
