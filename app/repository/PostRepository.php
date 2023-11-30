@@ -8,21 +8,25 @@ use core\repository\AbstractRepository;
 class PostRepository extends AbstractRepository
 {
 
-    public function getList(int $offset, int $limit) : array
+    public function getList(int $offset, int $limit, array $whereTerms, ?string $order) : array
     {
-        $sql = 'SELECT * ' . $this->sqlWithTerms() . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+        $sql = 'SELECT  post.* ' . $this->sqlWithTerms($whereTerms) . ' GROUP BY post.id ' . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
         return array_map(fn($row) => Post::fromArray($row), $this->db->select($sql));
     }
 
-    public function getTotalCount() : int
+    public function getTotalCount(array $whereTerms) : int
     {
-        $sql = 'SELECT COUNT(*) ' . $this->sqlWithTerms();
+        $sql = 'SELECT COUNT(*) ' . $this->sqlWithTerms($whereTerms);
         return $this->db->selectColumnOne($sql, 'COUNT(*)');
     }
 
-    private function sqlWithTerms() : string
+    private function sqlWithTerms(array $whereTerms) : string
     {
-        return ' FROM ' . $this->getTableName() . ' ORDER BY id ASC ';
+        $sql = ' FROM ' . $this->getTableName();
+        if ($whereTerms) {
+            $sql.= implode(' AND ', $whereTerms);
+        }
+        return $sql;
     }
 
     protected function getTableName(): string
