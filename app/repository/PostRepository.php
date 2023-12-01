@@ -38,7 +38,6 @@ class PostRepository extends AbstractRepository
                         $userId, $subscribes, $admins
                         );
         $sql = 'SELECT  post.* ' . $terms . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
-        //var_export($sql); die;
         return array_map(fn($row) => Post::fromArray($row), $this->db->select($sql));
     }
 

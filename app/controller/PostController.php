@@ -8,6 +8,7 @@ use app\dto\TagDto;
 use app\model\Post;
 use app\model\Tag;
 use app\repository\AdministratorRepository;
+use app\repository\LikeRepository;
 use app\repository\PostRepository;
 use app\repository\SubscribeRepository;
 use app\repository\TagRepository;
@@ -22,7 +23,8 @@ class PostController
     private PostRepository $postRepository;
     private TagRepository $tagRepository;
     private SubscribeRepository $subscribeRepository;
-    private AdministratorRepository$administratorRepository;
+    private AdministratorRepository $administratorRepository;
+    private LikeRepository $likeRepository;
     private TokenService $tokenService;
     private JsonView $view;
     private int $pageCount;
@@ -32,16 +34,18 @@ class PostController
      * @param TagRepository $tagRepository
      * @param SubscribeRepository $subscribeRepository
      * @param AdministratorRepository $administratorRepository
+     * @param LikeRepository $likeRepository
      * @param TokenService $tokenService
      * @param JsonView $view
      * @param int $pageCount
      */
-    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, JsonView $view, int $pageCount)
+    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, LikeRepository $likeRepository, TokenService $tokenService, JsonView $view, int $pageCount)
     {
         $this->postRepository = $postRepository;
         $this->tagRepository = $tagRepository;
         $this->subscribeRepository = $subscribeRepository;
         $this->administratorRepository = $administratorRepository;
+        $this->likeRepository = $likeRepository;
         $this->tokenService = $tokenService;
         $this->view = $view;
         $this->pageCount = $pageCount;
@@ -54,7 +58,7 @@ class PostController
         $pageSize = $request->getQueryParam('size', $this->pageCount);
         $currentPage = $request->getQueryParam('page', 1);
         $posts = array_map(
-            fn($post) => $this->hydratePostDto($post)->toArray(),
+            fn($post) => $this->hydratePostDto($post, $userId)->toArray(),
             $this->postRepository->getList(
                 $pageSize * ($currentPage - 1),
                 $pageSize,
@@ -93,7 +97,7 @@ class PostController
         return $this->view->render($listCommunities);
     }
 
-    private function hydratePostDto(?Post $post) : ?PostDto
+    private function hydratePostDto(?Post $post, ?string $userId) : ?PostDto
     {
         if ($post === null) {
             return null;
@@ -103,7 +107,9 @@ class PostController
             $this->tagRepository->getPostTags($post->getId())
         );
         $arrayOfTags = array_map(fn($tag) => $tag->toArray(),$tags);
-        $dto = PostDto::fromArray($post->toArray());
+        $postArray = $post->toArray();
+        $postArray['hasLike'] = $userId !== null && $this->likeRepository->checkHasLike($userId ,$postArray['id']);
+        $dto = PostDto::fromArray($postArray);
         $dto->setTags($arrayOfTags);
         return $dto;
     }

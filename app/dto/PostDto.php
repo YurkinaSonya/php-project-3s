@@ -69,7 +69,6 @@ class PostDto extends AbstractDto
         $this->tags = $tags;
     }
 
-
     protected static function getDtoTypes(): array
     {
         return ['createTime' => DateTimeJsonable::class];

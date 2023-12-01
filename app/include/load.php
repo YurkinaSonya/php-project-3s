@@ -31,6 +31,7 @@ require_once INC_APP_REPOSITORY . '/UserRepository.php';
 require_once INC_APP_REPOSITORY . '/SubscribeRepository.php';
 require_once INC_APP_REPOSITORY . '/TagRepository.php';
 require_once INC_APP_REPOSITORY . '/PostRepository.php';
+require_once INC_APP_REPOSITORY . '/LikeRepository.php';
 
 require_once INC_APP_CONTROLLER . '/IndexController.php';
 require_once INC_APP_CONTROLLER . '/AddressController.php';

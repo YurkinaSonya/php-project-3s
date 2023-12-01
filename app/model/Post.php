@@ -14,7 +14,6 @@ class Post extends AbstractModel
     protected string $authorId;
     protected string $authorName;
     protected int $likes;
-    protected int $hasLike;
     protected int $commentsCount;
     protected ?string $image = null;
     protected ?string $communityId = null;
@@ -30,14 +29,13 @@ class Post extends AbstractModel
      * @param string $authorId
      * @param string $authorName
      * @param int $likes
-     * @param int $hasLike
      * @param int $commentsCount
      * @param string|null $image
      * @param string|null $communityId
      * @param string|null $communityName
      * @param string|null $addressId
      */
-    public function __construct(?string $id, \DateTime $createTime, string $title, string $description, int $readingTime, string $authorId, string $authorName, int $likes, int $hasLike, int $commentsCount, ?string $image = null, ?string $communityId = null, ?string $communityName = null, ?string $addressId = null)
+    public function __construct(?string $id, \DateTime $createTime, string $title, string $description, int $readingTime, string $authorId, string $authorName, int $likes, int $commentsCount, ?string $image = null, ?string $communityId = null, ?string $communityName = null, ?string $addressId = null)
     {
         $this->id = $id;
         $this->createTime = $createTime;
@@ -47,7 +45,6 @@ class Post extends AbstractModel
         $this->authorId = $authorId;
         $this->authorName = $authorName;
         $this->likes = $likes;
-        $this->hasLike = $hasLike;
         $this->commentsCount = $commentsCount;
         $this->image = $image;
         $this->communityId = $communityId;
@@ -135,16 +132,6 @@ class Post extends AbstractModel
         $this->likes = $likes;
     }
 
-    public function getHasLike(): int
-    {
-        return $this->hasLike;
-    }
-
-    public function setHasLike(int $hasLike): void
-    {
-        $this->hasLike = $hasLike;
-    }
-
     public function getCommentsCount(): int
     {
         return $this->commentsCount;
@@ -197,7 +184,7 @@ class Post extends AbstractModel
 
     static public function getModelDbFields(): array
     {
-        return ['id' =>'id', 'create_time' => 'createTime', 'title' => 'title', 'description' => 'description', 'reading_time' => 'readingTime', 'author_id' => 'authorId', 'author_name' => 'authorName', 'likes' => 'likes', 'has_like' => 'hasLike', 'comments_count' => 'commentsCount', 'image' => 'image', 'community_id' => 'communityId', 'community_name' => 'communityName', 'address_id' => 'addressId'];
+        return ['id' =>'id', 'create_time' => 'createTime', 'title' => 'title', 'description' => 'description', 'reading_time' => 'readingTime', 'author_id' => 'authorId', 'author_name' => 'authorName', 'likes' => 'likes', 'comments_count' => 'commentsCount', 'image' => 'image', 'community_id' => 'communityId', 'community_name' => 'communityName', 'address_id' => 'addressId'];
     }
 
     protected static function getModelDbComplexFields(): array

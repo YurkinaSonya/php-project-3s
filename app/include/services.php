@@ -24,6 +24,7 @@ use app\repository\TagRepository;
 use app\controller\PostController;
 use app\repository\PostRepository;
 use app\middleware\AddressChainValidator;
+use app\repository\LikeRepository;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -75,6 +76,12 @@ $svc['app.repository.posts'] = \core\ServiceContainer::share(static function ($s
     );
 });
 
+$svc['app.repository.likes'] = \core\ServiceContainer::share(static function ($svc) {
+    return new LikeRepository(
+        $svc['core.db.handler']
+    );
+});
+
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
 });
@@ -114,6 +121,7 @@ $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($s
         $svc['app.repository.tags'],
         $svc['app.repository.subscribers'],
         $svc['app.repository.admins'],
+        $svc['app.repository.likes'],
         $svc['app.service.tokens'],
         $svc['core.view.json'],
         $svc['config.per_page']
