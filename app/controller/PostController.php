@@ -68,8 +68,7 @@ class PostController
                 $request->getQueryParam('max'),
                 $request->getQueryParam('onlyMyCommunities') === 'true',
                 $userId,
-                ($userId !== null) ? $this->subscribeRepository->getSubscribesOfUser($userId) : null,
-                ($userId !== null) ? $this->administratorRepository->getAdminRolesOfUser($userId) : null,
+                ($userId !== null) ? $this->getMyCommunityIds($userId) : null,
                 $request->getQueryParam('sorting')
             )
         );
@@ -80,8 +79,7 @@ class PostController
             $request->getQueryParam('max'),
             $request->getQueryParam('onlyMyCommunities') === 'true',
             $userId,
-            ($userId !== null) ? $this->subscribeRepository->getSubscribesOfUser($userId) : null,
-            ($userId !== null) ? $this->administratorRepository->getAdminRolesOfUser($userId) : null
+            ($userId !== null) ? $this->getMyCommunityIds($userId) : null
         );
         $pageInfo = new PageInfoDto($pageSize, ceil($total/$pageSize), $currentPage);
         return $this->view->render(["posts" => $posts, "pagination" => $pageInfo->toArray()]);
@@ -117,5 +115,21 @@ class PostController
     private function hydrateTagDto(Tag $model) : TagDto
     {
         return TagDto::fromArray($model->toArray());
+    }
+
+    protected function getMyCommunityIds(string $userId) : array
+    {
+        $subscribes = $this->subscribeRepository->getSubscribesOfUser($userId);
+        $admins = $this->administratorRepository->getAdminRolesOfUser($userId);
+        $myCommunitiesIds = [];
+        foreach ($subscribes as $subCommunityId) {
+            $myCommunitiesIds[] = $subCommunityId;
+        }
+        foreach ($admins as $adminCommunityId) {
+            if (!in_array($adminCommunityId, $myCommunitiesIds)) {
+                $myCommunitiesIds[] = $adminCommunityId;
+            }
+        }
+        return $myCommunitiesIds;
     }
 }

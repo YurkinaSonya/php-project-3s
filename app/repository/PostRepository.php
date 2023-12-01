@@ -17,8 +17,7 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $subscribes,
-        ?array $admins,
+        ?array $myCommunitiesIds,
         ?string $sorting
     ) : array
     {
@@ -35,7 +34,7 @@ class PostRepository extends AbstractRepository
         $terms = $this->sqlWithTerms(
                         $tags, $author, $min,
                         $max, $onlyMyCommunities,
-                        $userId, $subscribes, $admins
+                        $userId, $myCommunitiesIds
                         );
         $sql = 'SELECT  post.* ' . $terms . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
         return array_map(fn($row) => Post::fromArray($row), $this->db->select($sql));
@@ -48,14 +47,13 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $subscribes,
-        ?array $admins
+        ?array $myCommunitiesIds
     ) : int
     {
         $sql = 'SELECT COUNT(*) as cnt' . $this->sqlWithTerms(
                                                         $tags, $author, $min,
                                                         $max, $onlyMyCommunities,
-                                                        $userId, $subscribes, $admins
+                                                        $userId, $myCommunitiesIds
                                                         );
         return $this->db->selectColumnOne($sql, 'cnt');
     }
@@ -67,19 +65,19 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $subscribes,
-        ?array $admins
+        ?array $myCommunitiesIds
     ) : string
     {
         $whereTerms = $this->generateWhereTerms(
             $tags, $author, $min,
             $max, $onlyMyCommunities,
-            $userId, $subscribes, $admins
+            $userId, $myCommunitiesIds
         );;
         $sql = ' FROM ' . $this->getTableName();
         if ($tags) {
             $sql .= ' JOIN post_tags ON post.id = post_tags.post_id ';
         }
+        $sql .= ' LEFT JOIN community ON post.community_id = community.id ';
         if ($whereTerms) {
             $sql.= ' WHERE ' . implode(' AND ', $whereTerms);
         }
@@ -94,8 +92,7 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $subscribes,
-        ?array $admins
+        ?array $myCommunitiesIds,
     ) : array
     {
         $whereTerms = [];
@@ -113,17 +110,9 @@ class PostRepository extends AbstractRepository
             $whereTerms[] = ' post.reading_time <= ' . $max;
         }
         if ($onlyMyCommunities === true and $userId !== null) {
-            $myCommunitiesIds = [];
-            foreach ($subscribes as $subCommunityId) {
-                $myCommunitiesIds[] = $subCommunityId;
-            }
-            foreach ($admins as $adminCommunityId) {
-                if (!in_array($adminCommunityId, $myCommunitiesIds)) {
-                    $myCommunitiesIds[] = $adminCommunityId;
-                }
-            }
             $whereTerms[] = ' post.community_id in ("' . implode('", "', $myCommunitiesIds) .'")';
         }
+        $whereTerms[] = ' (community.id IS NULL or community.is_closed = 0 or community.id in ("' .  implode('", "', $myCommunitiesIds). '")) ';
         return $whereTerms;
     }
 
