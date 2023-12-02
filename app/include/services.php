@@ -25,6 +25,7 @@ use app\controller\PostController;
 use app\repository\PostRepository;
 use app\middleware\AddressChainValidator;
 use app\repository\LikeRepository;
+use app\middleware\PostFilterValidator;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -195,6 +196,12 @@ $svc['app.middleware.profile'] = \core\ServiceContainer::share(static function (
         $svc['app.repository.users'],
         $svc['app.service.tokens'],
         $svc['app.service.encrypt']
+    );
+});
+
+$svc['app.middleware.post.filter'] = \core\ServiceContainer::share(static function ($svc) {
+    return new PostFilterValidator(
+        $svc['app.repository.tags']
     );
 });
 

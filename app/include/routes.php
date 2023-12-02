@@ -73,7 +73,7 @@ $router->addRoute('GET', '/tag', fn(
 $router->addRoute('GET', '/post', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->listOfPosts($route, $request));
+) => $svc['app.controller.posts']->listOfPosts($route, $request))->addMiddleware($svc['app.middleware.post.filter']);
 
 
 

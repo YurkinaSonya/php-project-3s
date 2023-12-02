@@ -51,6 +51,7 @@ require_once INC_APP_MIDDLEWARE . '/SubscribeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/UnsubscribeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/ProfileValidator.php';
 require_once INC_APP_MIDDLEWARE . '/CommunityValidator.php';
+require_once INC_APP_MIDDLEWARE . '/PostFilterValidator.php';
 require_once INC_APP_MIDDLEWARE . '/TokenMiddleware.php';
 
 

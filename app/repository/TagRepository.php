@@ -22,6 +22,13 @@ class TagRepository extends AbstractRepository
                 WHERE post_id = "' . $postId . '"';
         return array_map(fn($row) => Tag::fromArray($row), $this->db->select($sql));
     }
+
+    public function getTagById(string $id) : ?Tag
+    {
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $result = $this->db->selectOne($sql);
+        return $result ? Tag::fromArray($result) : null;
+    }
     protected function getTableName(): string
     {
         return 'tag';

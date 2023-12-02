@@ -121,15 +121,6 @@ class PostController
     {
         $subscribes = $this->subscribeRepository->getSubscribesOfUser($userId);
         $admins = $this->administratorRepository->getAdminRolesOfUser($userId);
-        $myCommunitiesIds = [];
-        foreach ($subscribes as $subCommunityId) {
-            $myCommunitiesIds[] = $subCommunityId;
-        }
-        foreach ($admins as $adminCommunityId) {
-            if (!in_array($adminCommunityId, $myCommunitiesIds)) {
-                $myCommunitiesIds[] = $adminCommunityId;
-            }
-        }
-        return $myCommunitiesIds;
+        return array_merge($subscribes ?: [], $admins ?: []);;
     }
 }

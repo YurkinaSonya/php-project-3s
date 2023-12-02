@@ -109,10 +109,15 @@ class PostRepository extends AbstractRepository
         if ($max) {
             $whereTerms[] = ' post.reading_time <= ' . $max;
         }
-        if ($onlyMyCommunities === true and $userId !== null) {
+        if ($onlyMyCommunities === true && $userId !== null) {
             $whereTerms[] = ' post.community_id in ("' . implode('", "', $myCommunitiesIds) .'")';
         }
-        $whereTerms[] = ' (community.id IS NULL or community.is_closed = 0 or community.id in ("' .  implode('", "', $myCommunitiesIds). '")) ';
+        $closedCommunities = ' (community.id IS NULL or community.is_closed = 0 ';
+        if ($myCommunitiesIds !== null) {
+            $closedCommunities .= 'or community.id in ("' .  implode('", "', $myCommunitiesIds). '")';
+        }
+        $closedCommunities .= ') ';
+        $whereTerms[] = $closedCommunities;
         return $whereTerms;
     }
 
