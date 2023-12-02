@@ -37,5 +37,10 @@ abstract class Validator implements Middleware
         }
     }
 
+    protected function checkIsNumeric(string $value) : bool
+    {
+        return preg_match('/^\d+$/',$value);
+    }
+
 
 }
