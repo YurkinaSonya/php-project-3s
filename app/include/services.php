@@ -28,6 +28,9 @@ use app\repository\LikeRepository;
 use app\middleware\PostFilterValidator;
 use app\middleware\GetPostValidator;
 use app\repository\CommentRepository;
+use app\middleware\CommentTreeValidator;
+use app\middleware\AddLikeValidator;
+use app\middleware\RemoveLikeValidator;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -221,6 +224,34 @@ $svc['app.middleware.post.get'] = \core\ServiceContainer::share(static function 
         $svc['app.repository.subscribers'],
         $svc['app.repository.admins'],
         $svc['app.service.tokens']
+    );
+});
+
+$svc['app.middleware.comment.tree'] = \core\ServiceContainer::share(static function ($svc) {
+    return new CommentTreeValidator(
+        $svc['app.repository.comments']
+    );
+});
+
+$svc['app.middleware.like.add'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AddLikeValidator(
+        $svc['app.repository.posts'],
+        $svc['app.repository.communities'],
+        $svc['app.repository.subscribers'],
+        $svc['app.repository.admins'],
+        $svc['app.service.tokens'],
+        $svc['app.repository.likes']
+    );
+});
+
+$svc['app.middleware.like.remove'] = \core\ServiceContainer::share(static function ($svc) {
+    return new RemoveLikeValidator(
+        $svc['app.repository.posts'],
+        $svc['app.repository.communities'],
+        $svc['app.repository.subscribers'],
+        $svc['app.repository.admins'],
+        $svc['app.service.tokens'],
+        $svc['app.repository.likes']
     );
 });
 

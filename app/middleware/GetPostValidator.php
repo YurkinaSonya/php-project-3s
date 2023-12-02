@@ -14,12 +14,12 @@ use core\Route;
 
 class GetPostValidator extends Validator
 {
-    private PostRepository $postRepository;
-    private CommunityRepository $communityRepository;
-    private SubscribeRepository$subscribeRepository;
-    private AdministratorRepository $administratorRepository;
-    private TokenService $tokenService;
-    private int $statusCode = 400;
+    protected PostRepository $postRepository;
+    protected CommunityRepository $communityRepository;
+    protected SubscribeRepository$subscribeRepository;
+    protected AdministratorRepository $administratorRepository;
+    protected TokenService $tokenService;
+    protected int $statusCode = 400;
 
     /**
      * @param PostRepository $postRepository
@@ -56,12 +56,12 @@ class GetPostValidator extends Validator
 
     }
 
-    private function checkPostExists(string $id) : bool
+    protected function checkPostExists(string $id) : bool
     {
         return $this->postRepository->getPost($id) !== null;
     }
 
-    private function checkPermissions(string $communityId, ?string $userId) : bool
+    protected function checkPermissions(string $communityId, ?string $userId) : bool
     {
         if ($this->communityRepository->checkCommunityIsClosed($communityId)) {
             if ($userId !== null) {

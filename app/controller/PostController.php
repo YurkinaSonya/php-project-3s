@@ -6,8 +6,10 @@ use app\dto\CommentDto;
 use app\dto\PageInfoDto;
 use app\dto\PostDto;
 use app\dto\PostFullDto;
+use app\dto\ResponseDto;
 use app\dto\TagDto;
 use app\model\Comment;
+use app\model\Like;
 use app\model\Post;
 use app\model\Tag;
 use app\repository\AdministratorRepository;
@@ -111,15 +113,22 @@ class PostController
         return $this->view->render($children);
     }
 
-    private function generateChildren(string $commentId, array & $allChildren) : void
+    public function setLike(Route $route, Request $request) : Response
     {
-        $children = $this->commentRepository->getChildren($commentId);
-        foreach ($children as $child) {
-            $allChildren[] = $child;
-            $this->generateChildren($child->getId(), $allChildren);
-        }
+        $postId = $route->getParam(0);
+        $userId = $this->tokenService->getCurrentUserId();
+        $likeId = $this->likeRepository->addLike(new Like(null, $userId, $postId, null));
+        return $this->view->render([$likeId]);
     }
 
+    public function removeLike(Route $route, Request $request) : Response
+    {
+        $postId = $route->getParam(0);
+        $userId = $this->tokenService->getCurrentUserId();
+        $this->likeRepository->removeLike($this->likeRepository->getLike($userId, $postId));
+        $resp = new ResponseDto(null, 'like was removed');
+        return $this->view->render($resp->toArray());
+    }
 
     public function listOfTags(Route $route, Request $request) : Response
     {
@@ -128,6 +137,16 @@ class PostController
             $this->tagRepository->getList()
         );
         return $this->view->render($listCommunities);
+    }
+
+
+    private function generateChildren(string $commentId, array & $allChildren) : void
+    {
+        $children = $this->commentRepository->getChildren($commentId);
+        foreach ($children as $child) {
+            $allChildren[] = $child;
+            $this->generateChildren($child->getId(), $allChildren);
+        }
     }
 
     private function hydratePostFullDto(?Post $post, ?string $userId) : ?PostFullDto

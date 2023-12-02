@@ -10,6 +10,7 @@ require_once INC_APP_MODEL . '/Subscribe.php';
 require_once INC_APP_MODEL . '/Tag.php';
 require_once INC_APP_MODEL . '/Post.php';
 require_once INC_APP_MODEL . '/Comment.php';
+require_once INC_APP_MODEL . '/Like.php';
 
 require_once INC_APP_DTO . '/SearchAddressDto.php';
 require_once INC_APP_DTO . '/CommunityDto.php';
@@ -57,6 +58,9 @@ require_once INC_APP_MIDDLEWARE . '/ProfileValidator.php';
 require_once INC_APP_MIDDLEWARE . '/CommunityValidator.php';
 require_once INC_APP_MIDDLEWARE . '/PostFilterValidator.php';
 require_once INC_APP_MIDDLEWARE . '/GetPostValidator.php';
+require_once INC_APP_MIDDLEWARE . '/CommentTreeValidator.php';
+require_once INC_APP_MIDDLEWARE . '/AddLikeValidator.php';
+require_once INC_APP_MIDDLEWARE . '/RemoveLikeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/TokenMiddleware.php';
 
 

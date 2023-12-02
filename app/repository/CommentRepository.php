@@ -32,6 +32,12 @@ class CommentRepository extends AbstractRepository
         return array_map(fn($row) => Comment::fromArray($row), $this->db->select($sql));
     }
 
+    public function getParent(string $id) : ?string
+    {
+        $sql = 'SELECT parent_id FROM comment WHERE id = "' . $id . '"';
+        return intval($this->db->selectColumnOne($sql, 'parent_id'));
+    }
+
     protected function getTableName(): string
     {
         return 'comment';

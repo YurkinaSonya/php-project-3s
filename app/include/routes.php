@@ -75,6 +75,18 @@ $router->addRoute('GET', '/tag', fn(
     Request    $request
 ) => $svc['app.controller.posts']->listOfTags($route, $request));
 
+/** @see \app\controller\PostController::setLike() */
+$router->addRoute('POST', '/post/([a-zA-Z0-9\-]+)/like', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->setLike($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.like.add']);
+
+/** @see \app\controller\PostController::removeLike() */
+$router->addRoute('DELETE', '/post/([a-zA-Z0-9\-]+)/like', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->removeLike($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.like.remove']);
+
 /** @see \app\controller\PostController::concretePost() */
 $router->addRoute('GET', '/post/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
@@ -88,11 +100,12 @@ $router->addRoute('GET', '/post', fn(
 ) => $svc['app.controller.posts']->listOfPosts($route, $request))->addMiddleware($svc['app.middleware.post.filter']);
 
 
+
 /** @see \app\controller\PostController::getNestedComments() */
 $router->addRoute('GET', '/comment/([a-zA-Z0-9\-]+)/tree', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->getNestedComments($route, $request));
+) => $svc['app.controller.posts']->getNestedComments($route, $request))->addMiddleware($svc['app.middleware.comment.tree']);
 
 
 
