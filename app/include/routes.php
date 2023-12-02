@@ -79,7 +79,7 @@ $router->addRoute('GET', '/tag', fn(
 $router->addRoute('GET', '/post/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->concretePost($route, $request));
+) => $svc['app.controller.posts']->concretePost($route, $request))->addMiddleware($svc['app.middleware.post.get']);
 
 /** @see \app\controller\PostController::listOfPosts() */
 $router->addRoute('GET', '/post', fn(

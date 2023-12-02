@@ -132,6 +132,18 @@ class PostRepository extends AbstractRepository
         $whereTerms[] = $closedCommunities;
         return $whereTerms;
     }
+    public function getPost(string $id) : ?Post
+    {
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $result = $this->db->selectOne($sql);
+        return $result ? Post::fromArray($result) : null;
+    }
+
+    public function getCommunityOFPost(string $postId) : ?string
+    {
+        $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE id = "' . $postId . '"';
+        return $this->db->selectColumnOne($sql, 'community_id');
+    }
 
     protected function getTableName(): string
     {

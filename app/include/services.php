@@ -26,6 +26,8 @@ use app\repository\PostRepository;
 use app\middleware\AddressChainValidator;
 use app\repository\LikeRepository;
 use app\middleware\PostFilterValidator;
+use app\middleware\GetPostValidator;
+use app\repository\CommentRepository;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -83,6 +85,12 @@ $svc['app.repository.likes'] = \core\ServiceContainer::share(static function ($s
     );
 });
 
+$svc['app.repository.comments'] = \core\ServiceContainer::share(static function ($svc) {
+    return new CommentRepository(
+        $svc['core.db.handler']
+    );
+});
+
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
 });
@@ -123,6 +131,7 @@ $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($s
         $svc['app.repository.subscribers'],
         $svc['app.repository.admins'],
         $svc['app.repository.likes'],
+        $svc['app.repository.comments'],
         $svc['app.service.tokens'],
         $svc['core.view.json'],
         $svc['config.per_page']
@@ -202,6 +211,16 @@ $svc['app.middleware.profile'] = \core\ServiceContainer::share(static function (
 $svc['app.middleware.post.filter'] = \core\ServiceContainer::share(static function ($svc) {
     return new PostFilterValidator(
         $svc['app.repository.tags']
+    );
+});
+
+$svc['app.middleware.post.get'] = \core\ServiceContainer::share(static function ($svc) {
+    return new GetPostValidator(
+        $svc['app.repository.posts'],
+        $svc['app.repository.communities'],
+        $svc['app.repository.subscribers'],
+        $svc['app.repository.admins'],
+        $svc['app.service.tokens']
     );
 });
 

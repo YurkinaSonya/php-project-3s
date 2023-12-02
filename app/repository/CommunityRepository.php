@@ -19,6 +19,12 @@ class CommunityRepository extends AbstractRepository
         return $result ? Community::fromArray($result) : null;
     }
 
+    public function checkCommunityIsClosed(string $id) : bool
+    {
+        $sql = 'SELECT is_closed FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        return boolval($this->db->selectColumnOne($sql, 'is_closed'));
+    }
+
     protected function getTableName(): string
     {
         return 'community';
