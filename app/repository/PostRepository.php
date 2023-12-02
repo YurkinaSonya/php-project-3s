@@ -18,7 +18,8 @@ class PostRepository extends AbstractRepository
         ?bool $onlyMyCommunities,
         ?string $userId,
         ?array $myCommunitiesIds,
-        ?string $sorting
+        ?string $sorting,
+        ?string $communityId = null
     ) : array
     {
         $order = null;
@@ -34,11 +35,14 @@ class PostRepository extends AbstractRepository
         $terms = $this->sqlWithTerms(
                         $tags, $author, $min,
                         $max, $onlyMyCommunities,
-                        $userId, $myCommunitiesIds
+                        $userId, $myCommunitiesIds,
+                        $communityId
                         );
         $sql = 'SELECT  post.* ' . $terms . $order . ' LIMIT ' . $limit . ' OFFSET ' . $offset;
         return array_map(fn($row) => Post::fromArray($row), $this->db->select($sql));
     }
+
+
 
     public function getTotalCount(
         ?array $tags,
@@ -47,15 +51,17 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $myCommunitiesIds
+        ?array $myCommunitiesIds,
+        ?string $communityId = null
     ) : int
     {
         $sql = 'SELECT COUNT(*) as cnt' . $this->sqlWithTerms(
                                                         $tags, $author, $min,
                                                         $max, $onlyMyCommunities,
-                                                        $userId, $myCommunitiesIds
+                                                        $userId, $myCommunitiesIds,
+                                                        $communityId
                                                         );
-        return $this->db->selectColumnOne($sql, 'cnt');
+        return $this->db->selectColumnOne($sql, 'cnt') ?: 0;
     }
 
     private function sqlWithTerms(
@@ -65,13 +71,15 @@ class PostRepository extends AbstractRepository
         ?string $max,
         ?bool $onlyMyCommunities,
         ?string $userId,
-        ?array $myCommunitiesIds
+        ?array $myCommunitiesIds,
+        ?string $communityId = null
     ) : string
     {
         $whereTerms = $this->generateWhereTerms(
             $tags, $author, $min,
             $max, $onlyMyCommunities,
-            $userId, $myCommunitiesIds
+            $userId, $myCommunitiesIds,
+            $communityId
         );;
         $sql = ' FROM ' . $this->getTableName();
         if ($tags) {
@@ -93,6 +101,7 @@ class PostRepository extends AbstractRepository
         ?bool $onlyMyCommunities,
         ?string $userId,
         ?array $myCommunitiesIds,
+        ?string $communityId = null
     ) : array
     {
         $whereTerms = [];
@@ -117,6 +126,9 @@ class PostRepository extends AbstractRepository
             $closedCommunities .= 'or community.id in ("' .  implode('", "', $myCommunitiesIds). '")';
         }
         $closedCommunities .= ') ';
+        if ($communityId !== null) {
+            $whereTerms[] = ' post.community_id = "' . $communityId . '" ';
+        }
         $whereTerms[] = $closedCommunities;
         return $whereTerms;
     }

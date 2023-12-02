@@ -31,6 +31,12 @@ $router->addRoute('GET', '/community$', fn(
     Request    $request
 ) => $svc['app.controller.communities']->list($route, $request));
 
+/** @see \app\controller\PostController::listOfPosts() */
+$router->addRoute('GET', '/community/([a-zA-Z0-9\-]{3,})/post', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->listOfPosts($route, $request))->addMiddleware($svc['app.middleware.communities'])->addMiddleware($svc['app.middleware.post.filter']);
+
 /** @see \app\controller\CommunityController::single() */
 $router->addRoute('GET', '/community/([a-zA-Z0-9\-]{3,})', fn(
     core\Route $route,
@@ -68,6 +74,12 @@ $router->addRoute('GET', '/tag', fn(
     core\Route $route,
     Request    $request
 ) => $svc['app.controller.posts']->listOfTags($route, $request));
+
+/** @see \app\controller\PostController::concretePost() */
+$router->addRoute('GET', '/post/([a-zA-Z0-9\-]+)', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->concretePost($route, $request));
 
 /** @see \app\controller\PostController::listOfPosts() */
 $router->addRoute('GET', '/post', fn(

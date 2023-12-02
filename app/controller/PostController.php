@@ -69,7 +69,8 @@ class PostController
                 $request->getQueryParam('onlyMyCommunities') === 'true',
                 $userId,
                 ($userId !== null) ? $this->getMyCommunityIds($userId) : null,
-                $request->getQueryParam('sorting')
+                $request->getQueryParam('sorting'),
+                $route->getParam(0)
             )
         );
         $total = $this->postRepository->getTotalCount(
@@ -79,7 +80,8 @@ class PostController
             $request->getQueryParam('max'),
             $request->getQueryParam('onlyMyCommunities') === 'true',
             $userId,
-            ($userId !== null) ? $this->getMyCommunityIds($userId) : null
+            ($userId !== null) ? $this->getMyCommunityIds($userId) : null,
+            $route->getParam(0)
         );
         $pageInfo = new PageInfoDto($pageSize, ceil($total/$pageSize), $currentPage);
         return $this->view->render(["posts" => $posts, "pagination" => $pageInfo->toArray()]);
