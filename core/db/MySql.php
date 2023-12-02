@@ -68,7 +68,8 @@ class MySql implements Handler
     }
     public function selectColumnOne(string $sql, string $columnName) : mixed
     {
-        return $this->selectOne($sql)[$columnName];
+        $fullOne = $this->selectOne($sql);
+        return $fullOne? $fullOne[$columnName] : null;
     }
 
     public function insert($tableName, $values): bool|int
