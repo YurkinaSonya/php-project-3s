@@ -103,6 +103,23 @@ class PostController
         return $this->view->render($dto->toArray());
     }
 
+    public function getNestedComments(Route $route, Request $request) : Response
+    {
+        $children = [];
+        $this->generateChildren($route->getParam(0), $children);
+        $children = array_map(fn($comment) => $this->hydrateCommentDto($comment)->toArray(),$children);
+        return $this->view->render($children);
+    }
+
+    private function generateChildren(string $commentId, array & $allChildren) : void
+    {
+        $children = $this->commentRepository->getChildren($commentId);
+        foreach ($children as $child) {
+            $allChildren[] = $child;
+            $this->generateChildren($child->getId(), $allChildren);
+        }
+    }
+
 
     public function listOfTags(Route $route, Request $request) : Response
     {

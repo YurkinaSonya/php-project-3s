@@ -88,6 +88,13 @@ $router->addRoute('GET', '/post', fn(
 ) => $svc['app.controller.posts']->listOfPosts($route, $request))->addMiddleware($svc['app.middleware.post.filter']);
 
 
+/** @see \app\controller\PostController::getNestedComments() */
+$router->addRoute('GET', '/comment/([a-zA-Z0-9\-]+)/tree', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->getNestedComments($route, $request));
+
+
 
 
 /** @see \app\controller\AuthorizationController::register() */
