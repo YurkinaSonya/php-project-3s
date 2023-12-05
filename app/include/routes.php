@@ -87,6 +87,12 @@ $router->addRoute('DELETE', '/post/([a-zA-Z0-9\-]+)/like', fn(
     Request    $request
 ) => $svc['app.controller.posts']->removeLike($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.like.remove']);
 
+/** @see \app\controller\PostController::createComment() */
+$router->addRoute('POST', '/post/([a-zA-Z0-9\-]+)/comment', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->createComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.post.get'])->addMiddleware($svc['app.middleware.comment.create']);
+
 /** @see \app\controller\PostController::concretePost() */
 $router->addRoute('GET', '/post/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
@@ -105,7 +111,19 @@ $router->addRoute('GET', '/post', fn(
 $router->addRoute('GET', '/comment/([a-zA-Z0-9\-]+)/tree', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->getNestedComments($route, $request))->addMiddleware($svc['app.middleware.comment.tree']);
+) => $svc['app.controller.posts']->getNestedComments($route, $request))->addMiddleware($svc['app.middleware.comment.tree'])->addMiddleware($svc['app.middleware.post.comment']);
+
+/** @see \app\controller\PostController::updateComment() */
+$router->addRoute('PUT', '/comment/([a-zA-Z0-9\-]+)', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->updateComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.update'])->addMiddleware($svc['app.middleware.post.comment']);
+
+/** @see \app\controller\PostController::deleteComment() */
+$router->addRoute('DELETE', '/comment/([a-zA-Z0-9\-]+)', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->deleteComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.delete'])->addMiddleware($svc['app.middleware.post.comment']);
 
 
 

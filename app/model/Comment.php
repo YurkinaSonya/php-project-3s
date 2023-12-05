@@ -8,26 +8,26 @@ class Comment extends AbstractModel
 {
     protected ?string $id;
     protected string $authorId;
-    protected string $author;
+    protected ?string $author;
     protected string $postId;
     protected ?string $parentId;
     protected string $content;
-    protected \DateTime $createTime;
+    protected ?\DateTime $createTime;
     protected ?\DateTime $modifiedTime = null;
     protected ?\DateTime $deleteTime = null;
 
     /**
      * @param string|null $id
      * @param string $authorId
-     * @param string $author
+     * @param string|null $author
      * @param string $postId
      * @param string|null $parentId
      * @param string $content
-     * @param \DateTime $createTime
+     * @param \DateTime|null $createTime
      * @param \DateTime|null $modifiedTime
      * @param \DateTime|null $deleteTime
      */
-    public function __construct(?string $id, string $authorId, string $author, string $postId, ?string $parentId, string $content, \DateTime $createTime, ?\DateTime $modifiedTime, ?\DateTime $deleteTime)
+    public function __construct(?string $id, string $authorId, ?string $author, string $postId, ?string $parentId, string $content, ?\DateTime $createTime = null, ?\DateTime $modifiedTime = null, ?\DateTime $deleteTime = null)
     {
         $this->id = $id;
         $this->authorId = $authorId;
@@ -61,6 +61,16 @@ class Comment extends AbstractModel
         $this->authorId = $authorId;
     }
 
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?string $author): void
+    {
+        $this->author = $author;
+    }
+
     public function getPostId(): string
     {
         return $this->postId;
@@ -91,12 +101,12 @@ class Comment extends AbstractModel
         $this->content = $content;
     }
 
-    public function getCreateTime(): \DateTime
+    public function getCreateTime(): ?\DateTime
     {
         return $this->createTime;
     }
 
-    public function setCreateTime(\DateTime $createTime): void
+    public function setCreateTime(?\DateTime $createTime): void
     {
         $this->createTime = $createTime;
     }

@@ -3,11 +3,13 @@
 namespace app\controller;
 
 use app\dto\CommentDto;
+use app\dto\CreateCommentDto;
 use app\dto\PageInfoDto;
 use app\dto\PostDto;
 use app\dto\PostFullDto;
 use app\dto\ResponseDto;
 use app\dto\TagDto;
+use app\dto\UpdateCommentDto;
 use app\model\Comment;
 use app\model\Like;
 use app\model\Post;
@@ -18,6 +20,7 @@ use app\repository\LikeRepository;
 use app\repository\PostRepository;
 use app\repository\SubscribeRepository;
 use app\repository\TagRepository;
+use app\service\AccessService;
 use app\service\TokenService;
 use core\http\Request;
 use core\http\Response;
@@ -28,34 +31,31 @@ class PostController
 {
     private PostRepository $postRepository;
     private TagRepository $tagRepository;
-    private SubscribeRepository $subscribeRepository;
-    private AdministratorRepository $administratorRepository;
     private LikeRepository $likeRepository;
     private CommentRepository $commentRepository;
     private TokenService $tokenService;
+    private AccessService $accessService;
     private JsonView $view;
     private int $pageCount;
 
     /**
      * @param PostRepository $postRepository
      * @param TagRepository $tagRepository
-     * @param SubscribeRepository $subscribeRepository
-     * @param AdministratorRepository $administratorRepository
      * @param LikeRepository $likeRepository
      * @param CommentRepository $commentRepository
      * @param TokenService $tokenService
+     * @param AccessService $accessService
      * @param JsonView $view
      * @param int $pageCount
      */
-    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, LikeRepository $likeRepository, CommentRepository $commentRepository, TokenService $tokenService, JsonView $view, int $pageCount)
+    public function __construct(PostRepository $postRepository, TagRepository $tagRepository, LikeRepository $likeRepository, CommentRepository $commentRepository, TokenService $tokenService, AccessService $accessService, JsonView $view, int $pageCount)
     {
         $this->postRepository = $postRepository;
         $this->tagRepository = $tagRepository;
-        $this->subscribeRepository = $subscribeRepository;
-        $this->administratorRepository = $administratorRepository;
         $this->likeRepository = $likeRepository;
         $this->commentRepository = $commentRepository;
         $this->tokenService = $tokenService;
+        $this->accessService = $accessService;
         $this->view = $view;
         $this->pageCount = $pageCount;
     }
@@ -66,6 +66,7 @@ class PostController
         $userId = $this->tokenService->getCurrentUserId();
         $pageSize = $request->getQueryParam('size', $this->pageCount);
         $currentPage = $request->getQueryParam('page', 1);
+        $myCommunityIds = ($userId !== null) ? $this->accessService->getMyCommunityIds($userId) : null;
         $posts = array_map(
             fn($post) => $this->hydratePostDto($post, $userId)->toArray(),
             $this->postRepository->getList(
@@ -77,7 +78,7 @@ class PostController
                 $request->getQueryParam('max'),
                 $request->getQueryParam('onlyMyCommunities') === 'true',
                 $userId,
-                ($userId !== null) ? $this->getMyCommunityIds($userId) : null,
+                $myCommunityIds,
                 $request->getQueryParam('sorting'),
                 $route->getParam(0)
             )
@@ -89,7 +90,7 @@ class PostController
             $request->getQueryParam('max'),
             $request->getQueryParam('onlyMyCommunities') === 'true',
             $userId,
-            ($userId !== null) ? $this->getMyCommunityIds($userId) : null,
+            $myCommunityIds,
             $route->getParam(0)
         );
         $pageInfo = new PageInfoDto($pageSize, ceil($total/$pageSize), $currentPage);
@@ -109,9 +110,43 @@ class PostController
     {
         $children = [];
         $this->generateChildren($route->getParam(0), $children);
+        $children = array_filter($children);
+        $children = array_values($children);
         $children = array_map(fn($comment) => $this->hydrateCommentDto($comment)->toArray(),$children);
         return $this->view->render($children);
     }
+
+    public function createComment(Route $route, Request $request) : Response
+    {
+        $postId = $route->getParam(0);
+        $userId = $this->tokenService->getCurrentUserId();
+        $createDto = CreateCommentDto::fromArray($request->getBodyJson());
+        $dtoArray = $createDto->toArray();
+        $dtoArray['postId'] = $postId;
+        $dtoArray['authorId'] = $userId;
+        $dtoArray['deleteTime'] = null;
+        $dtoArray['modifiedTime'] = null;
+        $comment = Comment::fromArray($dtoArray);
+        $commentId = $this->commentRepository->createComment($comment);
+        return $this->view->render(['id' => $commentId]);
+    }
+
+    public function updateComment(Route $route, Request $request) : Response
+    {
+        $editDto = UpdateCommentDto::fromArray($request->getBodyJson());
+        $comment = $this->commentRepository->getComment($route->getParam(0));
+        $comment = $comment->outsideUpdateFromDto($editDto);
+        $commentId = $this->commentRepository->updateComment($comment);
+        return $this->view->render(['id' => $commentId]);
+    }
+
+    public function deleteComment(Route $route, Request $request) : Response
+    {
+        $comment = $this->commentRepository->getComment($route->getParam(0));
+        $commentId = $this->commentRepository->deleteComment($comment);
+        return $this->view->render(['id' => $commentId]);
+    }
+
 
     public function setLike(Route $route, Request $request) : Response
     {
@@ -159,8 +194,9 @@ class PostController
             fn($comment) => $this->hydrateCommentDto($comment),
             $this->commentRepository->getCommentsOfPost($post->getId())
         );
+        $comments = array_filter($comments);
+        $comments = array_values($comments);
         $dto->setComments(array_map(fn($comment) => $comment->toArray(),$comments));
-        //var_export($dto); die;
         return $dto;
     }
 
@@ -184,24 +220,25 @@ class PostController
         return $postArray;
     }
 
-    private function hydrateCommentDto(Comment $model) : CommentDto
+    private function hydrateCommentDto(Comment $model) : ?CommentDto
     {
         $commentArray = $model->toArray();
         unset($commentArray['postId']);
         unset($commentArray['parentId']);
-        $commentArray['subComments'] = $this->commentRepository->getSubComments($commentArray['id']);
+        $commentArray['subComments'] = $this->commentRepository->getSubCommentsCount($commentArray['id']);
+        if($commentArray['deleteTime'] !== null) {
+            if ($commentArray['subComments'] === 0) {
+                return null;
+            }
+            $commentArray['authorId'] = '';
+            $commentArray['author'] = '[Комментарий удален]';
+            $commentArray['content'] = '[Комментарий удален]';
+        }
         return CommentDto::fromArray($commentArray);
     }
 
     private function hydrateTagDto(Tag $model) : TagDto
     {
         return TagDto::fromArray($model->toArray());
-    }
-
-    protected function getMyCommunityIds(string $userId) : array
-    {
-        $subscribes = $this->subscribeRepository->getSubscribesOfUser($userId);
-        $admins = $this->administratorRepository->getAdminRolesOfUser($userId);
-        return array_merge($subscribes ?: [], $admins ?: []);
     }
 }

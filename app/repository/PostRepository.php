@@ -139,7 +139,7 @@ class PostRepository extends AbstractRepository
         return $result ? Post::fromArray($result) : null;
     }
 
-    public function getCommunityOFPost(string $postId) : ?string
+    public function getCommunityIdByPostId(string $postId) : ?string
     {
         $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE id = "' . $postId . '"';
         return $this->db->selectColumnOne($sql, 'community_id');

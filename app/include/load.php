@@ -25,6 +25,8 @@ require_once INC_APP_DTO . '/TagDto.php';
 require_once INC_APP_DTO . '/PostDto.php';
 require_once INC_APP_DTO . '/PostFullDto.php';
 require_once INC_APP_DTO . '/CommentDto.php';
+require_once INC_APP_DTO . '/CreateCommentDto.php';
+require_once INC_APP_DTO . '/UpdateCommentDto.php';
 require_once INC_APP_DTO . '/PageInfoDto.php';
 
 require_once INC_APP_REPOSITORY . '/AddressRepository.php';
@@ -46,6 +48,7 @@ require_once INC_APP_CONTROLLER . '/PostController.php';
 
 require_once INC_APP_SERVICE . '/TokenService.php';
 require_once INC_APP_SERVICE . '/EncryptService.php';
+require_once INC_APP_SERVICE . '/AccessService.php';
 
 require_once INC_APP_MIDDLEWARE . '/AddressSearchValidator.php';
 require_once INC_APP_MIDDLEWARE . '/AddressChainValidator.php';
@@ -57,8 +60,14 @@ require_once INC_APP_MIDDLEWARE . '/UnsubscribeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/ProfileValidator.php';
 require_once INC_APP_MIDDLEWARE . '/CommunityValidator.php';
 require_once INC_APP_MIDDLEWARE . '/PostFilterValidator.php';
+require_once INC_APP_MIDDLEWARE . '/AbstractPostValidator.php';
 require_once INC_APP_MIDDLEWARE . '/GetPostValidator.php';
+require_once INC_APP_MIDDLEWARE . '/CommentPostValidator.php';
 require_once INC_APP_MIDDLEWARE . '/CommentTreeValidator.php';
+require_once INC_APP_MIDDLEWARE . '/AbstractCommentValidator.php';
+require_once INC_APP_MIDDLEWARE . '/CommentCreateValidator.php';
+require_once INC_APP_MIDDLEWARE . '/CommentUpdateValidator.php';
+require_once INC_APP_MIDDLEWARE . '/CommentDeleteValidator.php';
 require_once INC_APP_MIDDLEWARE . '/AddLikeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/RemoveLikeValidator.php';
 require_once INC_APP_MIDDLEWARE . '/TokenMiddleware.php';
