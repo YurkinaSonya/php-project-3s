@@ -36,6 +36,8 @@ use app\middleware\CommentCreateValidator;
 use app\middleware\CommentUpdateValidator;
 use app\middleware\CommentDeleteValidator;
 use app\middleware\CommentPostValidator;
+use app\middleware\PostCommunityValidator;
+use app\middleware\PostCreateValidator;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -232,10 +234,23 @@ $svc['app.middleware.post.get'] = \core\ServiceContainer::share(static function 
     return new GetPostValidator(
         $svc['app.repository.posts'],
         $svc['app.repository.communities'],
-        $svc['app.repository.subscribers'],
-        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['app.service.access']
+    );
+});
+
+$svc['app.middleware.post.community'] = \core\ServiceContainer::share(static function ($svc) {
+    return new PostCommunityValidator(
+        $svc['app.repository.posts'],
+        $svc['app.repository.communities'],
+        $svc['app.service.tokens'],
+        $svc['app.service.access']
+    );
+});
+
+$svc['app.middleware.post.create'] = \core\ServiceContainer::share(static function ($svc) {
+    return new PostCreateValidator(
+        $svc['app.repository.tags']
     );
 });
 
@@ -243,8 +258,6 @@ $svc['app.middleware.post.comment'] = \core\ServiceContainer::share(static funct
     return new CommentPostValidator(
         $svc['app.repository.posts'],
         $svc['app.repository.communities'],
-        $svc['app.repository.subscribers'],
-        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['app.service.access'],
         $svc['app.repository.comments']
@@ -282,8 +295,6 @@ $svc['app.middleware.like.add'] = \core\ServiceContainer::share(static function 
     return new AddLikeValidator(
         $svc['app.repository.posts'],
         $svc['app.repository.communities'],
-        $svc['app.repository.subscribers'],
-        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['app.service.access'],
         $svc['app.repository.likes']
@@ -294,8 +305,6 @@ $svc['app.middleware.like.remove'] = \core\ServiceContainer::share(static functi
     return new RemoveLikeValidator(
         $svc['app.repository.posts'],
         $svc['app.repository.communities'],
-        $svc['app.repository.subscribers'],
-        $svc['app.repository.admins'],
         $svc['app.service.tokens'],
         $svc['app.service.access'],
         $svc['app.repository.likes']

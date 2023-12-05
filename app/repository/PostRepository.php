@@ -8,6 +8,13 @@ use core\repository\AbstractRepository;
 class PostRepository extends AbstractRepository
 {
 
+    public function createPost(Post $post) : string
+    {
+        $post->setCreateTime(new \DateTime());
+        $this->save($post);
+        return $post->getId();
+    }
+
     public function getList(
         int $offset,
         int $limit,

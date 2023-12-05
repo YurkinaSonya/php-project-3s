@@ -7,10 +7,17 @@ use core\repository\AbstractRepository;
 
 class TagRepository extends AbstractRepository
 {
+    public function setTagForPost(string $postId, string $tagId) : void
+    {
+        $values = [];
+        $values['post_id'] = $postId;
+        $values['tag_id'] = $tagId;
+        $this->db->insert('post_tags', $values);
+    }
+
     public function getList(): array
     {
         $sql = 'SELECT * FROM ' . $this->getTableName() . ' ORDER BY name ASC';
-        //var_export($this->db->select($sql)); die;
         return array_map(fn($row) => Tag::fromArray($row), $this->db->select($sql));
     }
 

@@ -7,12 +7,12 @@ use core\model\AbstractModel;
 class Post extends AbstractModel
 {
     protected ?string $id;
-    protected \DateTime $createTime;
+    protected ?\DateTime $createTime;
     protected string $title;
     protected string $description;
     protected int $readingTime;
     protected string $authorId;
-    protected string $authorName;
+    protected ?string $authorName;
     protected int $likes;
     protected int $commentsCount;
     protected ?string $image = null;
@@ -22,12 +22,12 @@ class Post extends AbstractModel
 
     /**
      * @param string|null $id
-     * @param \DateTime $createTime
+     * @param \DateTime|null $createTime
      * @param string $title
      * @param string $description
      * @param int $readingTime
      * @param string $authorId
-     * @param string $authorName
+     * @param string|null $authorName
      * @param int $likes
      * @param int $commentsCount
      * @param string|null $image
@@ -35,7 +35,7 @@ class Post extends AbstractModel
      * @param string|null $communityName
      * @param string|null $addressId
      */
-    public function __construct(?string $id, \DateTime $createTime, string $title, string $description, int $readingTime, string $authorId, string $authorName, int $likes, int $commentsCount, ?string $image = null, ?string $communityId = null, ?string $communityName = null, ?string $addressId = null)
+    public function __construct(?string $id, ?\DateTime $createTime, string $title, string $description, int $readingTime, string $authorId, ?string $authorName, int $likes, int $commentsCount, ?string $image = null, ?string $communityId = null, ?string $communityName = null, ?string $addressId = null)
     {
         $this->id = $id;
         $this->createTime = $createTime;

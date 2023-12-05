@@ -4,6 +4,7 @@ namespace app\controller;
 
 use app\dto\CommentDto;
 use app\dto\CreateCommentDto;
+use app\dto\CreatePostDto;
 use app\dto\PageInfoDto;
 use app\dto\PostDto;
 use app\dto\PostFullDto;
@@ -60,7 +61,6 @@ class PostController
         $this->pageCount = $pageCount;
     }
 
-
     public function listOfPosts(Route $route, Request $request) : Response
     {
         $userId = $this->tokenService->getCurrentUserId();
@@ -104,6 +104,26 @@ class PostController
         $post = $this->postRepository->getPost($postId);
         $dto = $this->hydratePostFullDto($post, $userId);
         return $this->view->render($dto->toArray());
+    }
+
+    public function createPost(Route $route, Request $request) : Response
+    {
+        $communityId = $route->getParam(0);
+        $userId = $this->tokenService->getCurrentUserId();
+        $createDto = CreatePostDto::fromArray($request->getBodyJson());
+        $dtoArray = $createDto->toArray();
+        $dtoArray['authorId'] = $userId;
+        $dtoArray['likes'] = 0;
+        $dtoArray['commentsCount'] = 0;
+        $dtoArray['communityId'] = $route->getParam(0);
+        $tags = array_values($dtoArray['tags']);
+        unset($dtoArray['tags']);
+        $post = Post::fromArray($dtoArray);
+        $postId = $this->postRepository->createPost($post);
+        foreach ($tags as $tagId) {
+            $this->tagRepository->setTagForPost($postId, $tagId);
+        }
+        return $this->view->render([$postId]);
     }
 
     public function getNestedComments(Route $route, Request $request) : Response

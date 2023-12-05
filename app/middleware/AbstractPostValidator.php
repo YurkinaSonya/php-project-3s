@@ -15,8 +15,7 @@ abstract class AbstractPostValidator extends Validator
 {
     protected PostRepository $postRepository;
     protected CommunityRepository $communityRepository;
-    protected SubscribeRepository$subscribeRepository;
-    protected AdministratorRepository $administratorRepository;
+
     protected TokenService $tokenService;
     protected AccessService $accessService;
     protected int $statusCode = 400;
@@ -24,17 +23,13 @@ abstract class AbstractPostValidator extends Validator
     /**
      * @param PostRepository $postRepository
      * @param CommunityRepository $communityRepository
-     * @param SubscribeRepository $subscribeRepository
-     * @param AdministratorRepository $administratorRepository
      * @param TokenService $tokenService
      * @param AccessService $accessService
      */
-    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, AccessService $accessService)
+    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository,TokenService $tokenService, AccessService $accessService)
     {
         $this->postRepository = $postRepository;
         $this->communityRepository = $communityRepository;
-        $this->subscribeRepository = $subscribeRepository;
-        $this->administratorRepository = $administratorRepository;
         $this->tokenService = $tokenService;
         $this->accessService = $accessService;
     }

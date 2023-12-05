@@ -68,6 +68,12 @@ $router->addRoute('DELETE', '/community/([a-zA-Z0-9\-]+)/unsubscribe', fn(
     Request    $request
 ) => $svc['app.controller.communities']->unsubscribe($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.communities'])->addMiddleware($svc['app.middleware.unsubscribe']);
 
+/** @see \app\controller\PostController::createPost() */
+$router->addRoute('POST', '/community/([a-zA-Z0-9\-]+)/post', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->createPost($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.communities'])->addMiddleware($svc['app.middleware.post.community'])->addMiddleware($svc['app.middleware.post.create']);
+
 
 /** @see \app\controller\PostController::listOfTags() */
 $router->addRoute('GET', '/tag', fn(
@@ -104,6 +110,12 @@ $router->addRoute('GET', '/post', fn(
     core\Route $route,
     Request    $request
 ) => $svc['app.controller.posts']->listOfPosts($route, $request))->addMiddleware($svc['app.middleware.post.filter']);
+
+/** @see \app\controller\PostController::createPost() */
+$router->addRoute('POST', '/post', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.posts']->createPost($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.post.create']);
 
 
 

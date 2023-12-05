@@ -16,9 +16,9 @@ use core\Route;
 class RemoveLikeValidator extends GetPostValidator
 {
     private LikeRepository $likeRepository;
-    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, AccessService $accessService,LikeRepository $likeRepository)
+    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository,TokenService $tokenService, AccessService $accessService,LikeRepository $likeRepository)
     {
-        parent::__construct($postRepository, $communityRepository, $subscribeRepository, $administratorRepository, $tokenService, $accessService);
+        parent::__construct($postRepository, $communityRepository, $tokenService, $accessService);
         $this->likeRepository = $likeRepository;
     }
     protected function validate(Route $route, Request $request): void

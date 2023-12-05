@@ -20,9 +20,9 @@ class CommentPostValidator extends AbstractPostValidator
     /**
      * @param CommentRepository $commentRepository
      */
-    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository, SubscribeRepository $subscribeRepository, AdministratorRepository $administratorRepository, TokenService $tokenService, AccessService $accessService, CommentRepository $commentRepository)
+    public function __construct(PostRepository $postRepository, CommunityRepository $communityRepository,TokenService $tokenService, AccessService $accessService, CommentRepository $commentRepository)
     {
-        parent::__construct($postRepository, $communityRepository, $subscribeRepository, $administratorRepository, $tokenService, $accessService);
+        parent::__construct($postRepository, $communityRepository, $tokenService, $accessService);
         $this->commentRepository = $commentRepository;
     }
 
