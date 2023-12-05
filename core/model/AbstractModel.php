@@ -72,9 +72,11 @@ abstract class AbstractModel
     {
         $complexFields = static::getModelDbComplexFields();
         if (array_key_exists($field, $complexFields)) {
+            if ($dbValue === null) {
+                return null;
+            }
             try {
                 $valueClassName = $complexFields[$field];
-
                 if ($dbValue instanceof \DateTime) {
                     $dbValue = $dbValue->format('Y-m-d H:i:s');
                 }
@@ -96,7 +98,6 @@ abstract class AbstractModel
     protected static function updateFromDto(AbstractDto $dto, array $modelArray) : AbstractModel
     {
         $dtoArray = $dto->toArray();
-//        var_export($modelArray); die;
         $modelFields = static::getModelDbFields();
         foreach ($modelFields as $dbField=>$field) {
             if (array_key_exists($field, $dtoArray) and $dtoArray[$field] !== null) {

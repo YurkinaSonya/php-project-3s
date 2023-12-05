@@ -26,6 +26,9 @@ abstract class AbstractDto
             if (!array_key_exists($key, $typesArray)) {
                 continue;
             }
+            if ($value === null) {
+                continue;
+            }
             $type = $typesArray[$key];
             if ($value instanceof \DateTime) {
                 $value = $value->format(\DateTime::ATOM);
