@@ -13,7 +13,7 @@ class MySql implements Handler
     private string $dbName;
     private string $host;
     private string $port;
-    private \mysqli $connection;
+    private $connection;
 
     public function __construct(
         string $user,
