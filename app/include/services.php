@@ -276,7 +276,8 @@ $svc['app.middleware.post.community'] = \core\ServiceContainer::share(static fun
 
 $svc['app.middleware.post.create'] = \core\ServiceContainer::share(static function ($svc) {
     return new PostCreateValidator(
-        $svc['app.repository.tags']
+        $svc['app.repository.tags'],
+        $svc['app.repository.address']
     );
 });
 

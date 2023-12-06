@@ -18,7 +18,6 @@ class LoginValidator extends AbstractUserValidator
         }
 
         if (!$this->validateEmail($body['email'])) {
-            $this->errors[] = 'The Email field is not a valid e-mail address';
             return;
         }
 
@@ -28,13 +27,17 @@ class LoginValidator extends AbstractUserValidator
         }
 
         if (!$this->checkPassword($body['email'], $body['password'])) {
-            $this->errors[] = 'User password does not match';
             return;
         }
     }
 
     private function checkPassword(string $email,string $password) : bool
     {
-        return $this->userRepository->findByEmail($email, $this->encryptService->encryptPassword($password)) !== null;
+        if ($this->userRepository->
+            findByEmail($email, $this->encryptService->encryptPassword($password)) === null) {
+            $this->errors[] = 'User password does not match';
+            return false;
+        }
+        return true;
     }
 }

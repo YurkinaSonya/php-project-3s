@@ -27,15 +27,18 @@ class RemoveLikeValidator extends GetPostValidator
         $postId = $route->getParam(0);
         $userId = $this->tokenService->getCurrentUserId();
         if (!$this->checkHasAlreadyLike($postId, $userId)) {
-            $this->errors[] = sprintf('post with "%s" id was not liked by user with "%s" id', $postId, $userId);
-            $this->statusCode = 400;
             return;
         }
     }
 
     private function checkHasAlreadyLike(string $postId, string $userId) : bool
     {
-        return !($this->likeRepository->getLike($userId, $postId) === null);
+        if ($this->likeRepository->getLike($userId, $postId) === null) {
+            $this->errors[] = sprintf('post with "%s" id was not liked by user with "%s" id', $postId, $userId);
+            $this->statusCode = 400;
+            return false;
+        }
+        return true;
     }
 
 }

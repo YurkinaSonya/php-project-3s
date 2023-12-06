@@ -32,8 +32,6 @@ class AddLikeValidator extends GetPostValidator
         $postId = $route->getParam(0);
         $userId = $this->tokenService->getCurrentUserId();
         if ($this->checkHasAlreadyLike($postId, $userId)) {
-            $this->errors[] = sprintf('post with "%s" id was already liked by user with "%s" id', $postId, $userId);
-            $this->statusCode = 400;
             return;
         }
 
@@ -41,6 +39,11 @@ class AddLikeValidator extends GetPostValidator
 
     private function checkHasAlreadyLike(string $postId, string $userId) : bool
     {
-        return !($this->likeRepository->getLike($userId, $postId) === null);
+        if ($this->likeRepository->getLike($userId, $postId) !== null) {
+            $this->errors[] = sprintf('post with "%s" id was already liked by user with "%s" id', $postId, $userId);
+            $this->statusCode = 400;
+            return false;
+        }
+        return true;
     }
 }

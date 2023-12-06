@@ -17,7 +17,6 @@ class RegisterValidator extends AbstractUserValidator
         }
 
         if (!$this->validateEmail($body['email'])) {
-            $this->errors[] = 'The Email field is not a valid e-mail address';
             return;
         }
 

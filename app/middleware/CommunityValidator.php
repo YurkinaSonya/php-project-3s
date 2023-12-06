@@ -25,7 +25,6 @@ class CommunityValidator extends Validator
     {
         $communityId = $route->getParam(0);
         if (!$this->validateCommunityExisting($communityId)) {
-            $this->errors[] = 'this community does not exist';
             return;
         }
     }
@@ -40,6 +39,7 @@ class CommunityValidator extends Validator
     private function validateCommunityExisting(string $communityId) : bool
     {
         if ($this->communityRepository->getCommunity($communityId) === null) {
+            $this->errors[] = 'this community does not exist';
             return false;
         }
         return true;

@@ -26,13 +26,9 @@ class CommentTreeValidator extends Validator
     {
         $commentId = $route->getParam(0);
         if (!$this->checkCommentExists($commentId)) {
-            $this->errors[] = sprintf('comment with %s id does not exist', $commentId);
-            $this->statusCode = 404;
             return;
         }
         if (!$this->checkIsRoot($commentId)) {
-            $this->errors[] = sprintf('comment with %s id is not a root element', $commentId);
-            $this->statusCode = 400;
             return;
         }
 
@@ -40,12 +36,22 @@ class CommentTreeValidator extends Validator
 
     private function checkCommentExists(string $id) : bool
     {
-        return $this->commentRepository->getComment($id) !== null;
+        if ($this->commentRepository->getComment($id) === null) {
+            $this->errors[] = sprintf('comment with %s id does not exist', $id);
+            $this->statusCode = 404;
+            return false;
+        }
+        return true;
     }
 
     private function checkIsRoot(string $id) : bool
     {
-        return $this->commentRepository->getParent($id) === null;
+        if ($this->commentRepository->getParent($id) !== null) {
+            $this->errors[] = sprintf('comment with %s id is not a root element', $id);
+            $this->statusCode = 400;
+            return false;
+        }
+        return true;
     }
 
 

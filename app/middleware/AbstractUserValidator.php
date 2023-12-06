@@ -31,7 +31,11 @@ abstract class AbstractUserValidator extends Validator
     protected function validateEmail(string $email) :bool
     {
         $regex = '/^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$/i';
-        return preg_match($regex, $email);
+        if (!preg_match($regex, $email)) {
+            $this->errors[] = 'The Email field is not a valid e-mail address';
+            return false;
+        }
+        return true;
     }
 
     protected function validatePassword(string $password) :bool
@@ -104,7 +108,10 @@ abstract class AbstractUserValidator extends Validator
 
     protected function checkUserExists(string $email) : bool
     {
-        return $this->userRepository->findByEmail($email) !== null;
+        if ($this->userRepository->findByEmail($email) === null) {
+            return false;
+        }
+        return true;
     }
 
     protected function renderErrors(array $errors): Response

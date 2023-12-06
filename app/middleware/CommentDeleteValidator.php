@@ -12,7 +12,7 @@ class CommentDeleteValidator extends AbstractCommentValidator
     {
         $commentId = $route->getParam(0);
         if (!$this->checkCommentExists($commentId)) {
-            $this->errors[] = sprintf('comment with "%s" id does not exist', $commentId);
+            return;
         }
         if ($this->checkPermsOnComment($commentId)) {
             return;

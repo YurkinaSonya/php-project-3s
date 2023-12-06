@@ -20,7 +20,6 @@ class ProfileValidator extends AbstractUserValidator
             return;
         }
         if (!$this->validateEmail($body['email'])) {
-            $this->errors[] = 'The Email field is not a valid e-mail address';
             return;
         }
         if (!$this->validateName($body['fullName'])) {

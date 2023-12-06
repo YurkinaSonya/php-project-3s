@@ -32,7 +32,7 @@ class SubscribeValidator extends Validator
         $communityId = $route->getParam(0);
         $userId = $this->tokenService->getCurrentUserId();
         if (!$this->validateIsAlready($userId, $communityId)) {
-            $this->errors[] = 'user already is subscribed on this community';
+            return;
         }
     }
 
@@ -42,6 +42,7 @@ class SubscribeValidator extends Validator
         if ($sub === null) {
             return true;
         }
+        $this->errors[] = 'user already is subscribed on this community';
         return false;
     }
 

@@ -12,8 +12,6 @@ class PostCommunityValidator extends AbstractPostValidator
         $communityId = $route->getParam(0);
         $userId = $this->tokenService->getCurrentUserId();
         if (!$this->checkPermissions($communityId, $userId)) {
-            $this->errors[] = sprintf('user have not permissions to post in community with "%s" id', $communityId);
-            $this->statusCode = 403;
             return;
         }
     }

@@ -49,6 +49,7 @@ abstract class AbstractCommentValidator extends Validator
         if ($comment === null ||
             ($comment->getDeleteTime() !== null &&
                 $this->commentRepository->getSubCommentsCount($id) === 0)) {
+            $this->errors[] = sprintf('comment with "%s" id does not exist', $id);
             return false;
         }
         return true;

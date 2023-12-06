@@ -36,7 +36,12 @@ abstract class AbstractPostValidator extends Validator
 
     protected function checkPostExists(string $id) : bool
     {
-        return $this->postRepository->getPost($id) !== null;
+        if ($this->postRepository->getPost($id) === null) {
+            $this->errors[] = sprintf('post with %s id does not exist', $id);
+            $this->statusCode = 404;
+            return false;
+        }
+        return true;
     }
 
     protected function checkPermissions(?string $communityId, ?string $userId) : bool
@@ -48,17 +53,22 @@ abstract class AbstractPostValidator extends Validator
             return true;
         }
         if ($userId === null) {
+            $this->errors[] = sprintf('user have not permissions to post in community with "%s" id', $communityId);
+            $this->statusCode = 403;
             return false;
         }
-        return in_array($communityId, $this->accessService->getMyCommunityIds($userId));
+        if (in_array($communityId, $this->accessService->getMyCommunityIds($userId))) {
+            $this->errors[] = sprintf('user have not permissions to post in community with "%s" id', $communityId);
+            $this->statusCode = 403;
+            return false;
+        }
+        return true;
     }
 
     protected function abstractValidate(?string $postId) : void
     {
         $userId = $this->tokenService->getCurrentUserId();
         if (!$this->checkPostExists($postId)) {
-            $this->errors[] = sprintf('post with %s id does not exist', $postId);
-            $this->statusCode = 404;
             return;
         }
         if (!$this->checkPermissions($this->postRepository->getCommunityIdByPostId($postId), $userId)) {

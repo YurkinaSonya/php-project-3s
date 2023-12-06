@@ -24,14 +24,17 @@ class AddressChainValidator extends Validator
     {
         $guid = $request->getQueryParam('objectGuid');
         if ($guid !== null and !$this->checkExistByGuid($guid)) {
-            $this->errors[] = sprintf('address with %s guid does not exist', $guid);
             return;
         }
     }
 
     private function checkExistByGuid(string $guid) : bool
     {
-        return $this->repository->getByGuid($guid) !== null;
+        if ($this->repository->getByGuid($guid) === null) {
+            $this->errors[] = sprintf('address with %s guid does not exist', $guid);
+            return false;
+        }
+        return true;
     }
 
     protected function renderErrors(array $errors): Response

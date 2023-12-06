@@ -25,14 +25,17 @@ class AddressSearchValidator extends Validator
     {
         $id = $request->getQueryParam('parentObjectId');
         if ($id !== null and !$this->checkExistById($id)) {
-            $this->errors[] = sprintf('address with %s id does not exist', $id);
             return;
         }
     }
 
     private function checkExistById(int $id) : bool
     {
-        return $this->repository->getById($id) !== null;
+        if ($this->repository->getById($id) === null) {
+            $this->errors[] = sprintf('address with %s id does not exist', $id);
+            return false;
+        }
+        return true;
     }
 
     protected function renderErrors(array $errors): Response

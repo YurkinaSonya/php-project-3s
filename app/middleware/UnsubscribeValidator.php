@@ -31,7 +31,6 @@ class UnsubscribeValidator extends Validator
         $communityId = $route->getParam(0);
         $userId = $this->tokenService->getCurrentUserId();
         if (!$this->validateIsAlready($userId, $communityId)) {
-            $this->errors[] = 'user is not subscribed on this community';
             return;
         }
     }
@@ -40,6 +39,7 @@ class UnsubscribeValidator extends Validator
     {
         $sub = $this->subscribeRepository->findByUserIdCommunityId($userId, $communityId);
         if ($sub === null) {
+            $this->errors[] = 'user is not subscribed on this community';
             return false;
         }
         return true;
