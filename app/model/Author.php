@@ -7,23 +7,33 @@ use core\model\AbstractModel;
 class Author extends AbstractModel
 {
     protected ?string $id;
-    protected string $userId;
+    protected string $fullName;
+    protected \DateTime $birthDate;
+    protected string $gender;
     protected int $posts;
     protected int $likes;
+    protected \DateTime $created;
 
     /**
      * @param string|null $id
-     * @param string $userId
+     * @param string $fullName
+     * @param \DateTime $birthDate
+     * @param string $gender
      * @param int $posts
      * @param int $likes
+     * @param \DateTime $created
      */
-    public function __construct(?string $id, string $userId, int $posts, int $likes)
+    public function __construct(?string $id, string $fullName, \DateTime $birthDate, string $gender, int $posts, int $likes, \DateTime $created)
     {
         $this->id = $id;
-        $this->userId = $userId;
+        $this->fullName = $fullName;
+        $this->birthDate = $birthDate;
+        $this->gender = $gender;
         $this->posts = $posts;
         $this->likes = $likes;
+        $this->created = $created;
     }
+
 
     public function getId(): ?string
     {
@@ -34,15 +44,34 @@ class Author extends AbstractModel
     {
         $this->id = $id;
     }
-
-    public function getUserId(): string
+    public function getFullName(): string
     {
-        return $this->userId;
+        return $this->fullName;
     }
 
-    public function setUserId(string $userId): void
+    public function setFullName(string $fullName): void
     {
-        $this->userId = $userId;
+        $this->fullName = $fullName;
+    }
+
+    public function getBirthDate(): \DateTime
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(\DateTime $birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+
+    public function getGender(): string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): void
+    {
+        $this->gender = $gender;
     }
 
     public function getPosts(): int
@@ -65,17 +94,35 @@ class Author extends AbstractModel
         $this->likes = $likes;
     }
 
+    public function getCreated(): \DateTime
+    {
+        return $this->created;
+    }
+
+    public function setCreated(\DateTime $created): void
+    {
+        $this->created = $created;
+    }
+
+
+
 
     /**
      * @inheritDoc
      */
     static public function getModelDbFields(): array
     {
-        return ['id' => 'id', 'user_id' => 'userId', 'posts' => 'posts', 'likes' => 'likes'];
+        return ['id' => 'id', 'full_name' => 'fullName', 'birth_date' => 'birthDate', 'gender' => 'gender', 'posts' => 'posts', 'likes' => 'likes', 'create_time' => 'created'];
     }
+
+    protected static function getModelDbComplexFields(): array
+    {
+        return ['create_time' => \DateTime::class, 'birth_date' => \DateTime::class];
+    }
+
 
     static protected function getModelDoubleFieldExample(): ?string
     {
-        return 'user_id';
+        return 'birth_date';
     }
 }

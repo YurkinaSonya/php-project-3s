@@ -168,7 +168,6 @@ $svc['app.controller.comments'] = \core\ServiceContainer::share(static function 
 $svc['app.controller.authors'] = \core\ServiceContainer::share(static function ($svc) {
     return new AuthorController(
         $svc['app.repository.authors'],
-        $svc['app.repository.users'],
         $svc['core.view.json']
     );
 });
