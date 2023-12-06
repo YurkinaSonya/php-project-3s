@@ -13,7 +13,7 @@ class MySql implements Handler
     private string $dbName;
     private string $host;
     private string $port;
-    private $connection;
+    private \mysqli $connection;
 
     public function __construct(
         string $user,
@@ -96,6 +96,13 @@ class MySql implements Handler
     {
         return $this->query($sql);
     }
+
+    public function escape(string $string): string
+    {
+        $this->connect();
+        return mysqli_real_escape_string($this->connection ,$string);
+    }
+
 
     public function getLastInsertId(): int
     {
