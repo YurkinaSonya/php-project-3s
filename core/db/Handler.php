@@ -22,6 +22,7 @@ interface Handler
     public function insert($tableName, $values): bool|int;
     public function update(string $tableName, array $values, ?string $where = null): bool|int;
     public function execute(string $sql) : bool|int;
+    public function escape(string $string) : string;
     public function getLastInsertId(): int;
 
 
