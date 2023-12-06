@@ -93,12 +93,6 @@ $router->addRoute('DELETE', '/post/([a-zA-Z0-9\-]+)/like', fn(
     Request    $request
 ) => $svc['app.controller.posts']->removeLike($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.like.remove']);
 
-/** @see \app\controller\PostController::createComment() */
-$router->addRoute('POST', '/post/([a-zA-Z0-9\-]+)/comment', fn(
-    core\Route $route,
-    Request    $request
-) => $svc['app.controller.posts']->createComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.post.get'])->addMiddleware($svc['app.middleware.comment.create']);
-
 /** @see \app\controller\PostController::concretePost() */
 $router->addRoute('GET', '/post/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
@@ -119,23 +113,30 @@ $router->addRoute('POST', '/post', fn(
 
 
 
-/** @see \app\controller\PostController::getNestedComments() */
+/** @see \app\controller\CommentController::getNestedComments() */
 $router->addRoute('GET', '/comment/([a-zA-Z0-9\-]+)/tree', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->getNestedComments($route, $request))->addMiddleware($svc['app.middleware.comment.tree'])->addMiddleware($svc['app.middleware.post.comment']);
+) => $svc['app.controller.comments']->getNestedComments($route, $request))->addMiddleware($svc['app.middleware.comment.tree'])->addMiddleware($svc['app.middleware.post.comment']);
 
-/** @see \app\controller\PostController::updateComment() */
+/** @see \app\controller\CommentController::createComment() */
+$router->addRoute('POST', '/post/([a-zA-Z0-9\-]+)/comment', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.comments']->createComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.post.get'])->addMiddleware($svc['app.middleware.comment.create']);
+
+
+/** @see \app\controller\CommentController::updateComment() */
 $router->addRoute('PUT', '/comment/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->updateComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.update'])->addMiddleware($svc['app.middleware.post.comment']);
+) => $svc['app.controller.comments']->updateComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.update'])->addMiddleware($svc['app.middleware.post.comment']);
 
-/** @see \app\controller\PostController::deleteComment() */
+/** @see \app\controller\CommentController::deleteComment() */
 $router->addRoute('DELETE', '/comment/([a-zA-Z0-9\-]+)', fn(
     core\Route $route,
     Request    $request
-) => $svc['app.controller.posts']->deleteComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.delete'])->addMiddleware($svc['app.middleware.post.comment']);
+) => $svc['app.controller.comments']->deleteComment($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.comment.delete'])->addMiddleware($svc['app.middleware.post.comment']);
 
 
 
@@ -172,4 +173,9 @@ $router->addRoute('PUT', '/profile', fn(
     Request    $request
 ) => $svc['app.controller.authorization']->edit($route, $request))->addMiddleware($svc['app.middleware.token'])->addMiddleware($svc['app.middleware.profile']);
 
+/** @see \app\controller\AuthorController::getList() */
+$router->addRoute('GET', '/author/list', fn(
+    core\Route $route,
+    Request    $request
+) => $svc['app.controller.authors']->getList($route, $request));
 

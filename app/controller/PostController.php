@@ -126,48 +126,6 @@ class PostController
         return $this->view->render([$postId]);
     }
 
-    public function getNestedComments(Route $route, Request $request) : Response
-    {
-        $children = [];
-        $this->generateChildren($route->getParam(0), $children);
-        $children = array_filter($children);
-        $children = array_values($children);
-        $children = array_map(fn($comment) => $this->hydrateCommentDto($comment)->toArray(),$children);
-        return $this->view->render($children);
-    }
-
-    public function createComment(Route $route, Request $request) : Response
-    {
-        $postId = $route->getParam(0);
-        $userId = $this->tokenService->getCurrentUserId();
-        $createDto = CreateCommentDto::fromArray($request->getBodyJson());
-        $dtoArray = $createDto->toArray();
-        $dtoArray['postId'] = $postId;
-        $dtoArray['authorId'] = $userId;
-        $dtoArray['deleteTime'] = null;
-        $dtoArray['modifiedTime'] = null;
-        $comment = Comment::fromArray($dtoArray);
-        $commentId = $this->commentRepository->createComment($comment);
-        return $this->view->render(['id' => $commentId]);
-    }
-
-    public function updateComment(Route $route, Request $request) : Response
-    {
-        $editDto = UpdateCommentDto::fromArray($request->getBodyJson());
-        $comment = $this->commentRepository->getComment($route->getParam(0));
-        $comment = $comment->outsideUpdateFromDto($editDto);
-        $commentId = $this->commentRepository->updateComment($comment);
-        return $this->view->render(['id' => $commentId]);
-    }
-
-    public function deleteComment(Route $route, Request $request) : Response
-    {
-        $comment = $this->commentRepository->getComment($route->getParam(0));
-        $commentId = $this->commentRepository->deleteComment($comment);
-        return $this->view->render(['id' => $commentId]);
-    }
-
-
     public function setLike(Route $route, Request $request) : Response
     {
         $postId = $route->getParam(0);
@@ -192,16 +150,6 @@ class PostController
             $this->tagRepository->getList()
         );
         return $this->view->render($listCommunities);
-    }
-
-
-    private function generateChildren(string $commentId, array & $allChildren) : void
-    {
-        $children = $this->commentRepository->getChildren($commentId);
-        foreach ($children as $child) {
-            $allChildren[] = $child;
-            $this->generateChildren($child->getId(), $allChildren);
-        }
     }
 
     private function hydratePostFullDto(?Post $post, ?string $userId) : ?PostFullDto

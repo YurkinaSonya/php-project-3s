@@ -11,6 +11,7 @@ require_once INC_APP_MODEL . '/Tag.php';
 require_once INC_APP_MODEL . '/Post.php';
 require_once INC_APP_MODEL . '/Comment.php';
 require_once INC_APP_MODEL . '/Like.php';
+require_once INC_APP_MODEL . '/Author.php';
 
 require_once INC_APP_DTO . '/SearchAddressDto.php';
 require_once INC_APP_DTO . '/CommunityDto.php';
@@ -29,6 +30,7 @@ require_once INC_APP_DTO . '/CommentDto.php';
 require_once INC_APP_DTO . '/CreateCommentDto.php';
 require_once INC_APP_DTO . '/UpdateCommentDto.php';
 require_once INC_APP_DTO . '/PageInfoDto.php';
+require_once INC_APP_DTO . '/AuthorDto.php';
 
 require_once INC_APP_REPOSITORY . '/AddressRepository.php';
 require_once INC_APP_REPOSITORY . '/CommunityRepository.php';
@@ -40,12 +42,15 @@ require_once INC_APP_REPOSITORY . '/TagRepository.php';
 require_once INC_APP_REPOSITORY . '/PostRepository.php';
 require_once INC_APP_REPOSITORY . '/LikeRepository.php';
 require_once INC_APP_REPOSITORY . '/CommentRepository.php';
+require_once INC_APP_REPOSITORY . '/AuthorRepository.php';
 
 require_once INC_APP_CONTROLLER . '/IndexController.php';
 require_once INC_APP_CONTROLLER . '/AddressController.php';
 require_once INC_APP_CONTROLLER . '/CommunityController.php';
 require_once INC_APP_CONTROLLER . '/AuthorizationController.php';
 require_once INC_APP_CONTROLLER . '/PostController.php';
+require_once INC_APP_CONTROLLER . '/CommentController.php';
+require_once INC_APP_CONTROLLER . '/AuthorController.php';
 
 require_once INC_APP_SERVICE . '/TokenService.php';
 require_once INC_APP_SERVICE . '/EncryptService.php';

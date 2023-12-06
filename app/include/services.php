@@ -38,6 +38,9 @@ use app\middleware\CommentDeleteValidator;
 use app\middleware\CommentPostValidator;
 use app\middleware\PostCommunityValidator;
 use app\middleware\PostCreateValidator;
+use app\controller\CommentController;
+use app\repository\AuthorRepository;
+use app\controller\AuthorController;
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(
@@ -101,6 +104,12 @@ $svc['app.repository.comments'] = \core\ServiceContainer::share(static function 
     );
 });
 
+$svc['app.repository.authors'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AuthorRepository(
+        $svc['core.db.handler']
+    );
+});
+
 $svc['app.controller.index'] = \core\ServiceContainer::share(static function ($svc) {
     return new IndexController();
 });
@@ -144,6 +153,23 @@ $svc['app.controller.posts'] = \core\ServiceContainer::share(static function ($s
         $svc['app.service.access'],
         $svc['core.view.json'],
         $svc['config.per_page']
+    );
+});
+
+$svc['app.controller.comments'] = \core\ServiceContainer::share(static function ($svc) {
+    return new CommentController(
+        $svc['app.repository.comments'],
+        $svc['app.service.tokens'],
+        $svc['core.view.json'],
+        $svc['config.delete_message']
+    );
+});
+
+$svc['app.controller.authors'] = \core\ServiceContainer::share(static function ($svc) {
+    return new AuthorController(
+        $svc['app.repository.authors'],
+        $svc['app.repository.users'],
+        $svc['core.view.json']
     );
 });
 
