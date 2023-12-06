@@ -20,7 +20,7 @@ class SubscribeRepository extends AbstractRepository
 
     public function getSubscribesOfUser(string $userId) : array
     {
-        $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE user_id = "' . $userId . '" AND unsubscribe_time IS NULL';
+        $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE user_id = "' . $this->db->escape($userId) . '" AND unsubscribe_time IS NULL';
         $result = $this->db->selectColumn($sql, 'community_id');
 //        $result = [];
 //        foreach ($middleResult as $res) {
@@ -31,7 +31,7 @@ class SubscribeRepository extends AbstractRepository
 
     public function findByUserIdCommunityId(string $userId, string $communityId) :?Subscribe
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE user_id = "' . $userId . '" AND community_id = "' . $communityId . '" AND unsubscribe_time IS NULL';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE user_id = "' . $this->db->escape($userId) . '" AND community_id = "' . $this->db->escape($communityId) . '" AND unsubscribe_time IS NULL';
         $result = $this->db->selectOne($sql);
         return $result ? Subscribe::fromArray($result) : null;
     }

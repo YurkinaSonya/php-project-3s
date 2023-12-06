@@ -26,13 +26,13 @@ class TagRepository extends AbstractRepository
         $sql = 'SELECT id, `name`, create_time
                 FROM post_tags 
                 JOIN tag ON post_tags.tag_id = tag.id
-                WHERE post_id = "' . $postId . '"';
+                WHERE post_id = "' . $this->db->escape($postId) . '"';
         return array_map(fn($row) => Tag::fromArray($row), $this->db->select($sql));
     }
 
     public function getTagById(string $id) : ?Tag
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? Tag::fromArray($result) : null;
     }

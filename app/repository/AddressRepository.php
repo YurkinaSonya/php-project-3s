@@ -14,7 +14,7 @@ class AddressRepository extends AbstractRepository
         }
         $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE parent_obj_id = ' . $parentId;
         if ($query != null) {
-            $sql .= ' AND text_search LIKE "%' . $query . '%"';
+            $sql .= ' AND text_search LIKE "%' . $this->db->escape($query) . '%"';
         }
         return array_map(fn($row) => Address::fromArray($row), $this->db->select($sql));
     }
@@ -22,19 +22,19 @@ class AddressRepository extends AbstractRepository
     public function parentsByGuid(string $guid) : array
     {
         $path = str_replace('.', ', ', $this->pathByGuid($guid));
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE obj_id IN ('. $path .') ORDER BY `level`';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE obj_id IN ('. $this->db->escape($path) .') ORDER BY `level`';
         return array_map(fn($row) => Address::fromArray($row), $this->db->select($sql));
     }
 
     private function pathByGuid(string $guid)
     {
-        $sql = 'SELECT path FROM ' . $this->getTableName() . ' WHERE guid = "' . $guid . '"';
+        $sql = 'SELECT path FROM ' . $this->getTableName() . ' WHERE guid = "' . $this->db->escape($guid) . '"';
         return $this->db->selectColumnOne($sql, 'path');
     }
 
     public function getByGuid(string $guid) : ?Address
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE guid = "' . $guid . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE guid = "' . $this->db->escape($guid) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? Address::fromArray($result) : null;
     }

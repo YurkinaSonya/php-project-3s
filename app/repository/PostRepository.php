@@ -114,41 +114,41 @@ class PostRepository extends AbstractRepository
         $whereTerms = [];
         if ($tags) {
             $inTags = '("' . implode('","', $tags) .'")';
-            $whereTerms[] = ' post_tags.tag_id in ' . $inTags;
+            $whereTerms[] = ' post_tags.tag_id in ' . $this->db->escape($inTags);
         }
         if ($author) {
-            $whereTerms[] = ' post.author_name LIKE "%' . $author . '%"';
+            $whereTerms[] = ' post.author_name LIKE "%' . $this->db->escape($author) . '%"';
         }
         if ($min) {
-            $whereTerms[] = ' post.reading_time >= ' . $min;
+            $whereTerms[] = ' post.reading_time >= ' . $this->db->escape($min);
         }
         if ($max) {
-            $whereTerms[] = ' post.reading_time <= ' . $max;
+            $whereTerms[] = ' post.reading_time <= ' . $this->db->escape($max);
         }
         if ($onlyMyCommunities === true && $userId !== null) {
-            $whereTerms[] = ' post.community_id in ("' . implode('", "', $myCommunitiesIds) .'")';
+            $whereTerms[] = ' post.community_id in ("' . $this->db->escape(implode('", "', $myCommunitiesIds)) .'")';
         }
         $closedCommunities = ' (community.id IS NULL or community.is_closed = 0 ';
         if ($myCommunitiesIds !== null) {
-            $closedCommunities .= 'or community.id in ("' .  implode('", "', $myCommunitiesIds). '")';
+            $closedCommunities .= 'or community.id in ("' .  $this->db->escape(implode('", "', $myCommunitiesIds)). '")';
         }
         $closedCommunities .= ') ';
         if ($communityId !== null) {
-            $whereTerms[] = ' post.community_id = "' . $communityId . '" ';
+            $whereTerms[] = ' post.community_id = "' . $this->db->escape($communityId) . '" ';
         }
         $whereTerms[] = $closedCommunities;
         return $whereTerms;
     }
     public function getPost(string $id) : ?Post
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? Post::fromArray($result) : null;
     }
 
     public function getCommunityIdByPostId(string $postId) : ?string
     {
-        $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE id = "' . $postId . '"';
+        $sql = 'SELECT community_id FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($postId) . '"';
         return $this->db->selectColumnOne($sql, 'community_id');
     }
 

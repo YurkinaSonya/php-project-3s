@@ -24,7 +24,7 @@ class UserRepository extends AbstractRepository
 
     public function findByEmail(string $email, ?string $password = null) : ?User
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE email = "' . $email . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE email = "' . $this->db->escape($email) . '"';
         if ($password !== null) {
             $sql .= ' AND password = "' . $password . '"';
         }
@@ -35,7 +35,7 @@ class UserRepository extends AbstractRepository
 
     public function findById(string $id) : ?User
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? User::fromArray($result) : null;
     }
@@ -43,7 +43,7 @@ class UserRepository extends AbstractRepository
     public function getListByIds(array $ids): array
     {
         $in = '("' . implode('","', $ids) .'")';
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id IN ' . $in;
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id IN ' . $this->db->escape($in);
         return array_map(fn($row) => User::fromArray($row), $this->db->select($sql));
     }
 

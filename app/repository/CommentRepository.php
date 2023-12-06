@@ -30,38 +30,38 @@ class CommentRepository extends AbstractRepository
 
     public function getComment(string $id) : ?Comment
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? Comment::fromArray($result) : null;
     }
 
     public function getCommentsOfPost(string $postId) : array
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE post_id = "' . $postId . '" AND parent_id IS NULL';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE post_id = "' . $this->db->escape($postId) . '" AND parent_id IS NULL';
         return array_map(fn($row) => Comment::fromArray($row), $this->db->select($sql));
     }
 
     public function getSubCommentsCount(string $id) : int
     {
-        $sql = 'SELECT sub_comments FROM comment_childs WHERE comment_id = "' . $id . '"';
+        $sql = 'SELECT sub_comments FROM comment_childs WHERE comment_id = "' . $this->db->escape($id) . '"';
         return (int)$this->db->selectColumnOne($sql, 'sub_comments');
     }
 
     public function getChildren(string $parentId) : array
     {
-        $sql = 'SELECT * FROM comment WHERE parent_id = "' . $parentId . '" ORDER BY create_time Asc';
+        $sql = 'SELECT * FROM comment WHERE parent_id = "' . $this->db->escape($parentId) . '" ORDER BY create_time Asc';
         return array_map(fn($row) => Comment::fromArray($row), $this->db->select($sql));
     }
 
     public function getParent(string $id) : ?string
     {
-        $sql = 'SELECT parent_id FROM comment WHERE id = "' . $id . '"';
+        $sql = 'SELECT parent_id FROM comment WHERE id = "' . $this->db->escape($id) . '"';
         return $this->db->selectColumnOne($sql, 'parent_id');
     }
 
     public function getAuthorId(string $commentId) : ?string
     {
-        $sql = 'SELECT author_id FROM comment WHERE id = "' . $commentId . '"';
+        $sql = 'SELECT author_id FROM comment WHERE id = "' . $this->db->escape($commentId) . '"';
         return $this->db->selectColumnOne($sql, 'author_id');
     }
 

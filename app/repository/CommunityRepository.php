@@ -14,14 +14,14 @@ class CommunityRepository extends AbstractRepository
     }
     public function getCommunity(string $id) : ?Community
     {
-        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT * FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         $result = $this->db->selectOne($sql);
         return $result ? Community::fromArray($result) : null;
     }
 
     public function checkCommunityIsClosed(string $id) : bool
     {
-        $sql = 'SELECT is_closed FROM ' . $this->getTableName() . ' WHERE id = "' . $id . '"';
+        $sql = 'SELECT is_closed FROM ' . $this->getTableName() . ' WHERE id = "' . $this->db->escape($id) . '"';
         return (bool)$this->db->selectColumnOne($sql, 'is_closed');
     }
 

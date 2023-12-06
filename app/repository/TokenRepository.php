@@ -37,7 +37,7 @@ class TokenRepository extends AbstractRepository
     public function findByToken(string $token) : ?Token
     {
         $currentDate = (new \DateTime())->format('Y-m-d H:i:s');
-        $sql = 'SELECT * FROM user_token WHERE `value` = "' . $token . '" AND expire_time > "' . $currentDate . '" AND logout_time IS NULL';
+        $sql = 'SELECT * FROM user_token WHERE `value` = "' . $this->db->escape($token) . '" AND expire_time > "' . $currentDate . '" AND logout_time IS NULL';
         $result = $this->db->selectOne($sql);
         return Token::fromArray($result);
     }
