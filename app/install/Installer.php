@@ -19,9 +19,17 @@ class Installer
 
     public function install() :void
     {
+        echo 'installing started' . PHP_EOL;
+        echo 'creating tables ';
         $this->createDbTables();
+        echo 'tables created' . PHP_EOL;
+        echo 'filling in data ' . PHP_EOL;
         $this->createDbData();
+        echo 'filling in data finished' . PHP_EOL;
+        echo 'creating triggers ';
         $this->createDbTriggers();
+        echo 'triggers created' . PHP_EOL;
+        echo 'installing finished' . PHP_EOL;
     }
 
     private function createDbTables() : void
@@ -33,7 +41,9 @@ class Installer
             $dropSql = 'DROP TABLE if EXISTS `' . $tableName . '`';
             $this->db->execute($dropSql);
             $this->db->execute($sql);
+            echo '.';
         }
+        echo PHP_EOL;
         $fkSql = 'SET FOREIGN_KEY_CHECKS = 1';
         $this->db->execute($fkSql);
     }
@@ -45,7 +55,9 @@ class Installer
             $dropSql = 'DROP TRIGGER if EXISTS `' . $triggerName . '`';
             $this->db->execute($dropSql);
             $this->db->execute($sql);
+            echo '.';
         }
+        echo PHP_EOL;
     }
 
     private function createDbData() : void
@@ -53,10 +65,14 @@ class Installer
         $fkSql = 'SET FOREIGN_KEY_CHECKS = 0';
         $this->db->execute($fkSql);
         foreach (DbDataSeeder::getData() as $tableName => $data) {
+            echo 'filling table ' . $tableName . '  ';
             foreach ($data as $item) {
                 $this->db->insert($tableName, $item);
+                echo '.';
             }
+            echo PHP_EOL;
         }
+        echo PHP_EOL;
         $fkSql = 'SET FOREIGN_KEY_CHECKS = 1';
         $this->db->execute($fkSql);
     }
