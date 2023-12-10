@@ -1,5 +1,6 @@
 <?php
 
+use app\install\Installer;
 use app\controller\AuthorizationController;
 use app\controller\CommunityController;
 use app\controller\IndexController;
@@ -41,6 +42,12 @@ use app\middleware\PostCreateValidator;
 use app\controller\CommentController;
 use app\repository\AuthorRepository;
 use app\controller\AuthorController;
+
+$svc['app.installer'] = \core\ServiceContainer::share(static function ($svc) {
+    return new Installer(
+        $svc['core.db.handler']
+    );
+});
 
 $svc['app.repository.address'] = \core\ServiceContainer::share(static function ($svc) {
     return new AddressRepository(

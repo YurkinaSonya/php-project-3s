@@ -1,4 +1,9 @@
 <?php
+require_once INC_APP_INSTALL . '/Installer.php';
+require_once INC_APP_INSTALL . '/DbTablesSeeder.php';
+require_once INC_APP_INSTALL . '/DbTriggerSeeder.php';
+require_once INC_APP_INSTALL . '/DbDataSeeder.php';
+
 require_once INC_APP_ENUM . '/Gender.php';
 require_once INC_APP_ENUM . '/ObjectLevel.php';
 
