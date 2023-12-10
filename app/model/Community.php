@@ -22,7 +22,7 @@ class Community extends AbstractModel
      * @param bool $isClosed
      * @param int $subscribersCount
      */
-    public function __construct(?string $id = null, \DateTime $createTime, string $name, string $description, bool $isClosed, int $subscribersCount)
+    public function __construct(?string $id, \DateTime $createTime, string $name, string $description, bool $isClosed, int $subscribersCount)
     {
         $this->id = $id;
         $this->createTime = $createTime;
